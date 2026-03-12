@@ -1,5 +1,4 @@
 # include "pieces.hpp"
-//Definitions of pieces and rotations
 //get_blocks(type, rotation)
 const int tetris_pieces[7][4][4][4] = {
     { // L. Four rotations.
