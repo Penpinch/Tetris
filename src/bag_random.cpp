@@ -2,7 +2,7 @@
 # include <stdlib.h>
 # include <time.h>
 
-#include <stdio.h>
+// #include <stdio.h>
 
 void swap(int *num1, int *num2){ // Made with Google help.
     int temporal = *num1;
