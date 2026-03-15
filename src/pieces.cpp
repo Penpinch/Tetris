@@ -20,8 +20,8 @@ const int tetris_pieces[7][4][4][4] = {
             {0, 0, 0, 0}, 
         },
         {
-            {0, 0, 1, 0}, 
-            {1, 1, 1, 0}, 
+            {0, 0, 0, 1}, 
+            {0, 1, 1, 1}, 
             {0, 0, 0, 0}, 
             {0, 0, 0, 0}, 
         },
@@ -187,7 +187,7 @@ const int tetris_pieces[7][4][4][4] = {
 void get_blocks(int piece_index, int rotation_index, Blocks *new_block){
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
-            new_block->block[i][j] = tetris_pieces[piece_index][rotation_index][i][j];
+            new_block->block[i][j] = tetris_pieces[piece_index - 1][rotation_index][i][j];
         }
     }
 }

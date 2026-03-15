@@ -2,7 +2,7 @@
 # define PIECES
 
 typedef enum{
-    PIECE_L, PIECE_J, PIECE_O, PIECE_S, PIECE_Z, PIECE_I, PIECE_T
+    EMPTY, PIECE_L, PIECE_J, PIECE_O, PIECE_S, PIECE_Z, PIECE_I, PIECE_T
 } Pieces;
 
 typedef struct{

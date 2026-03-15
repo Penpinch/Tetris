@@ -1,6 +1,30 @@
 # include "board.hpp"
-// Manage the playflield.
-//is_empty(x, y), set_block(), is_full(row), set_piece()
-bool is_empty(Board *board, int x, int y){
-    return (board->grid[x][y] == 0) ? true : false;
+# include "pieces.hpp"
+
+bool is_empty(Board board, int x, int y){
+    return (board.grid[x][y] == 0) ? true : false;
+}
+
+bool is_full(Board board, int row){
+    for(int i = 0; i < BOARD_WIDTH; i++){
+        if(board.grid[row][i] == 0){ return false; }
+    }
+    return true;
+}
+
+void set_block(Board *board, int x, int y, int piece_type){
+    board->grid[x][y] = piece_type;
+}
+
+void set_piece(Board *board, int piece_x, int piece_y, int piece_type, int rotation){
+    Blocks new_block;
+    get_blocks(piece_type, rotation, &new_block);
+
+    for(int x = 0; x < 4; x++){
+        for(int y = 0; y < 4; y++){
+            if(new_block.block[x][y] == 1){
+                set_block(board, piece_x + x, piece_y + y, piece_type);
+            }
+        }
+    }
 }

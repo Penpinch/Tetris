@@ -11,5 +11,8 @@ typedef struct{
 } Board;
 
 bool is_empty(Board *board, int x, int y);
+bool is_full(Board board, int row);
+void set_block(Board *Board, int x, int y, int piece_type);
+void set_piece(Board *board, int x, int y, int piece_type, int rotation);
 
 # endif 
