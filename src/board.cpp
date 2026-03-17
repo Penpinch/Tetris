@@ -5,13 +5,6 @@ bool is_empty(Board board, int x, int y){
     return (board.grid[x][y] == 0) ? true : false;
 }
 
-bool is_full(Board board, int row){
-    for(int i = 0; i < BOARD_WIDTH; i++){
-        if(board.grid[row][i] == 0){ return false; }
-    }
-    return true;
-}
-
 void set_block(Board *board, int x, int y, int piece_type){
     board->grid[x][y] = piece_type;
 }
