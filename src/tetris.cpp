@@ -20,7 +20,7 @@ int main(){
     set_piece(&board, 20, 0, PIECE_I, 1);
     set_piece(&board, 17, 6, PIECE_T, 1);
 
-    elmtd_lines = chech_lines(&board);
+    elmtd_lines = check_lines(&board);
 
     for(int i = 0; i < BOARD_HEIGHT; i++){
         for(int j = 0; j < BOARD_WIDTH; j++){

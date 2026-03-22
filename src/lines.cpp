@@ -26,7 +26,7 @@ void move_down_all(Board *board, int eliminated_row){
     }
 }
 
-int chech_lines(Board *board){
+int check_lines(Board *board){
     int eliminated_lines = 0;
     for(int i = BOARD_HEIGHT - 1; i >= 0; i--){
         if(is_full(board, i) == true){

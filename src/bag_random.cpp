@@ -36,7 +36,7 @@ void queue_front_pop(Queue *bag){
         shuffle(new_bag); 
 
         for(int i = 0; i < EXISTING_PIECES; i++){ queue_back_push(bag, new_bag[i]); }
-        return;
+        // return;
     }
     bag->existing_elements --;
     bag->front++;
