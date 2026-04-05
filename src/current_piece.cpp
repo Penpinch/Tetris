@@ -3,15 +3,15 @@
 # include "pieces.hpp"
 # include "board.hpp"
 
-void init_current_piece(Board *board, Current_piece *actual){
+void init_current_piece(Board *board, CurrentPiece *actual){
     actual->game_board = board;
     actual->piece_type = next_piece();
-    actual->currect_x = BOARD_WIDTH / 2 - 2;
-    actual->currect_y = 0;
+    actual->current_x = BOARD_WIDTH / 2 - 2;
+    actual->current_y = 0;
     actual->rotation = 0;
 }
 
-bool can_move(Current_piece *actual, int new_x, int new_y, int new_rotation){
+bool can_move(CurrentPiece *actual, int new_x, int new_y, int new_rotation){
     Blocks piece_shape;
     get_blocks(actual->piece_type, new_rotation, &piece_shape);
 
@@ -33,34 +33,34 @@ bool can_move(Current_piece *actual, int new_x, int new_y, int new_rotation){
     return true;
 }
 
-void move_to_left(Current_piece *actual){
-    if(can_move(actual, actual->currect_x-1, actual->currect_y, actual->rotation))
-        actual->currect_x -= 1;  
+void move_to_left(CurrentPiece *actual){
+    if(can_move(actual, actual->current_x-1, actual->current_y, actual->rotation))
+        actual->current_x -= 1;  
 }
 
-void move_to_right(Current_piece *actual){
-    if(can_move(actual, actual->currect_x+1, actual->currect_y, actual->rotation))
-        actual->currect_x += 1;
+void move_to_right(CurrentPiece *actual){
+    if(can_move(actual, actual->current_x+1, actual->current_y, actual->rotation))
+        actual->current_x += 1;
 }
 
-void rotate(Current_piece *actual){
+void rotate(CurrentPiece *actual){
     int new_rotation=(actual->rotation+1)%4;
-    if(can_move(actual, actual->currect_x, actual->currect_y, new_rotation))
+    if(can_move(actual, actual->current_x, actual->current_y, new_rotation))
         actual->rotation=new_rotation;
 }
 
-void go_down(Current_piece *actual){
-    if(can_move(actual, actual->currect_x, actual->currect_y+1, actual->rotation))
-        actual->currect_y += 1;
-    else{
-        set_piece(actual->game_board, actual->currect_x, actual->currect_y, actual->piece_type, actual->rotation);
-        actual->piece_type=next_piece();
-        actual->currect_x=BOARD_WIDTH/2-2;
-        actual->currect_y=0;
-        actual->rotation=0;
-
-        //bool game_over();
+bool go_down(CurrentPiece *actual){
+    if(can_move(actual, actual->current_x, actual->current_y+1, actual->rotation)){
+        actual->current_y += 1;
+        return true;
     }
+    set_piece(actual->game_board, actual->current_x, actual->current_y, actual->piece_type, actual->rotation);
+    actual->piece_type=next_piece();
+    actual->current_x=BOARD_WIDTH/2-2;
+    actual->current_y=0;
+    actual->rotation=0;
+    //bool game_over();
+    return false;
 }
 
 /* --- TEST ---

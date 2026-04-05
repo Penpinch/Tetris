@@ -31,6 +31,7 @@ int check_lines(Board *board){
     for(int i = BOARD_HEIGHT - 1; i >= 0; i--){
         if(is_full(board, i) == true){
             remove_line(board, i);
+            eliminated_lines += 1;
             move_down_all(board, i);
             i++;
         }

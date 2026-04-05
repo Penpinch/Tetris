@@ -5,16 +5,16 @@
 
 typedef struct{
     Board *game_board;
-    int currect_x, currect_y;
+    int current_x, current_y;
     int piece_type;
     int rotation;
-} Current_piece;
+} CurrentPiece;
 
-void init_current_piece(Board *board, Current_piece *actual);
-bool can_move(Current_piece *actual , int new_x, int new_y, int new_rotation);
-void move_to_left(Current_piece *actual);
-void move_to_right(Current_piece *actual);
-void rotate(Current_piece *actual);
-void go_down(Current_piece *actual);
+void init_current_piece(Board *board, CurrentPiece *actual);
+bool can_move(CurrentPiece *actual , int new_x, int new_y, int new_rotation);
+void move_to_left(CurrentPiece *actual);
+void move_to_right(CurrentPiece *actual);
+void rotate(CurrentPiece *actual);
+bool go_down(CurrentPiece *actual);
 
 # endif
