@@ -1,3 +1,7 @@
+# include <windows.h>
+# include <conio.h>
+# include <stdio.h>
+
 # include <time.h>
 # include "core.hpp"
 # include "bag_random.hpp"
@@ -6,7 +10,7 @@
 # include "lines.hpp"
 # include "pieces.hpp"
 
-//input(), reset(), update(), game_over(), update_score(), 
+//input(), reset(), game_over()
 // nivel / velocidad
 // spawn de piezas
 // limpieza de líneas
@@ -48,14 +52,41 @@ void gravity(StatesVariables *states, CurrentPiece *current_piece){
         moved = go_down(current_piece);
         start = clock();
     }
-    if(moved){ 
-        set_piece(
-            states->board, current_piece->current_x, current_piece->current_y, 
-            current_piece->piece_type, current_piece->rotation); 
-    }
+
+    // if(moved){ 
+    //     set_piece(
+    //         states->board, current_piece->current_x, current_piece->current_y, 
+    //         current_piece->piece_type, current_piece->rotation); 
+    // }
 }
 
 void update(Board *board, CurrentPiece *current_piece, StatesVariables *states){
+    bool moved = false;
+    int key;
+    printf("Presiona flechas (ESC para salir)...\n");
+    key = _getch(); // Leer el primer código
+    if(key == 224){ // 224 indica tecla especial(flechas)
+        key = _getch(); // Leer el segundo código
+        set_piece(
+            states->board, current_piece->current_x, current_piece->current_y, 
+            current_piece->piece_type, current_piece->rotation);
+
+        switch(key){
+            case 72: //Arriba
+                clean_piece_path(states, current_piece); rotate(current_piece);
+                break;
+            case 80: //Abajo
+                clean_piece_path(states, current_piece); moved = go_down(current_piece); 
+                break;  
+            case 75: //Izquierda
+                clean_piece_path(states, current_piece); move_to_left(current_piece); 
+                break;
+            case 77: //Derecha
+                clean_piece_path(states, current_piece); move_to_right(current_piece); 
+                break;
+        }
+    }
+
     gravity(states, current_piece);
     states->eliminated_lines = check_lines(board);
 }

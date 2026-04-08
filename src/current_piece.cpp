@@ -35,23 +35,28 @@ bool can_move(CurrentPiece *actual, int new_x, int new_y, int new_rotation){
 
 void move_to_left(CurrentPiece *actual){
     if(can_move(actual, actual->current_x-1, actual->current_y, actual->rotation))
-        actual->current_x -= 1;  
+        actual->current_x 
+        -= 1;  
+    set_piece(actual->game_board, actual->current_x, actual->current_y, actual->piece_type, actual->rotation);
 }
 
 void move_to_right(CurrentPiece *actual){
     if(can_move(actual, actual->current_x+1, actual->current_y, actual->rotation))
         actual->current_x += 1;
+    set_piece(actual->game_board, actual->current_x, actual->current_y, actual->piece_type, actual->rotation);
 }
 
 void rotate(CurrentPiece *actual){
     int new_rotation=(actual->rotation+1)%4;
     if(can_move(actual, actual->current_x, actual->current_y, new_rotation))
         actual->rotation=new_rotation;
+    set_piece(actual->game_board, actual->current_x, actual->current_y, actual->piece_type, actual->rotation);
 }
 
 bool go_down(CurrentPiece *actual){
     if(can_move(actual, actual->current_x, actual->current_y+1, actual->rotation)){
         actual->current_y += 1;
+        set_piece(actual->game_board, actual->current_x, actual->current_y, actual->piece_type, actual->rotation);
         return true;
     }
     set_piece(actual->game_board, actual->current_x, actual->current_y, actual->piece_type, actual->rotation);
