@@ -63,7 +63,7 @@ void gravity(StatesVariables *states, CurrentPiece *current_piece){
 void update(Board *board, CurrentPiece *current_piece, StatesVariables *states){
     bool moved = false;
     int key;
-    printf("Presiona flechas (ESC para salir)...\n");
+    
     key = _getch(); // Leer el primer código
     if(key == 224){ // 224 indica tecla especial(flechas)
         key = _getch(); // Leer el segundo código
