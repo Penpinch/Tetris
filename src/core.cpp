@@ -12,8 +12,6 @@
 
 //input(), reset(), game_over()
 // nivel / velocidad
-// spawn de piezas
-// limpieza de líneas
 
 void update_score(StatesVariables states, int eliminated_lines){
     switch(eliminated_lines){
@@ -26,6 +24,7 @@ void update_score(StatesVariables states, int eliminated_lines){
     states.score += eliminated_lines * (states.level + 1);
 }
 
+/* --- Maybe this won't be needed later ---
 void clean_piece_path(StatesVariables *states, CurrentPiece *current_piece){
     Blocks piece_shape;
     get_blocks(current_piece->piece_type, current_piece->rotation, &piece_shape);
@@ -36,7 +35,7 @@ void clean_piece_path(StatesVariables *states, CurrentPiece *current_piece){
             }
         }
     }
-}
+} */
 
 void gravity(StatesVariables *states, CurrentPiece *current_piece){
     static clock_t start = clock();
@@ -46,49 +45,37 @@ void gravity(StatesVariables *states, CurrentPiece *current_piece){
 
     end = clock();
     time_difference = ((float)(end - start)) / CLOCKS_PER_SEC;
-    
-    if(time_difference > states->gravity_time){
-        clean_piece_path(states, current_piece);
-        moved = go_down(current_piece);
-        start = clock();
-    }
 
-    // if(moved){ 
-    //     set_piece(
-    //         states->board, current_piece->current_x, current_piece->current_y, 
-    //         current_piece->piece_type, current_piece->rotation); 
-    // }
+    if(time_difference > states->gravity_time){ moved = go_down(current_piece); start = clock();
+    }
 }
 
 void update(Board *board, CurrentPiece *current_piece, StatesVariables *states){
     bool moved = false;
     int key;
-    
+
     key = _getch(); // Leer el primer código
     if(key == 224){ // 224 indica tecla especial(flechas)
         key = _getch(); // Leer el segundo código
-        set_piece(
-            states->board, current_piece->current_x, current_piece->current_y, 
-            current_piece->piece_type, current_piece->rotation);
 
         switch(key){
             case 72: //Arriba
-                clean_piece_path(states, current_piece); rotate(current_piece);
+                rotate(current_piece);
                 break;
             case 80: //Abajo
-                clean_piece_path(states, current_piece); moved = go_down(current_piece); 
+                moved = go_down(current_piece); 
                 break;  
             case 75: //Izquierda
-                clean_piece_path(states, current_piece); move_to_left(current_piece); 
+                move_to_left(current_piece); 
                 break;
             case 77: //Derecha
-                clean_piece_path(states, current_piece); move_to_right(current_piece); 
+                move_to_right(current_piece); 
                 break;
         }
     }
 
     gravity(states, current_piece);
-    states->eliminated_lines = check_lines(board);
+    states->eliminated_lines += check_lines(board);
 }
 
 // set_piece(board, 19, -1, PIECE_L, 3);

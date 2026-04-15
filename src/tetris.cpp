@@ -9,18 +9,30 @@ using namespace std;
 # include "lines.hpp"
 # include "pieces.hpp"
 
-// -- main loop --
+bool piece_occupies(CurrentPiece piece, int x, int y){ // Made with ChatGPT.
+    Blocks shape;
+    get_blocks(piece.piece_type, piece.rotation, &shape);
 
-void temporal_show(Board board){
+    for(int i = 0; i < 4; i++){
+        for(int j = 0; j < 4; j++){
+            if(shape.block[j][i] == 1){
+                if(piece.current_x + i == x && piece.current_y + j == y){ return true; }
+            }
+        }
+    }
+    return false;
+}
+
+void temporal_show(Board board, CurrentPiece current_piece){
     cout << endl;
     for(int i = 0; i < BOARD_HEIGHT; i++){
         for(int j = 0; j < BOARD_WIDTH; j++){
-            if(board.grid[i][j] == 0){ cout << "*"; } 
-            else { cout << board.grid[i][j]; }
+            int value = board.grid[i][j];
+            if(piece_occupies(current_piece, j, i)){ value = current_piece.piece_type; }
+            (value == 0) ? printf("*") : printf("%d", value);
         }
-        cout << endl;
-    }
     cout << endl;
+    }
 }
 
 int main(){
@@ -29,7 +41,7 @@ int main(){
     CurrentPiece current_piece = {&board, 0, 0, EMPTY, 0};
     StatesVariables states = {&board, 0, 0, 0, 0.5};
 
-    current_piece = {&board, 7, 10, PIECE_J, 0};
+    current_piece = {&board, 7, 15, PIECE_J, 0};
     set_piece(&board, 0, 20, PIECE_I, 1);
     set_piece(&board, 4, 20, PIECE_I, 1);
 
@@ -37,13 +49,10 @@ int main(){
     while(game_on){
         cout << cont;
         update(&board, &current_piece, &states);
-        
-        states.eliminated_lines += check_lines(&board);
-        cout << endl << "Eliminated lines: " << states.eliminated_lines << endl;
-        temporal_show(board);
 
-        if(states.eliminated_lines == 1){ game_on = false; }
-        if(cont >= 19){ game_on = false; }
+        cout << endl << "Eliminated lines: " << states.eliminated_lines << endl;
+        temporal_show(board, current_piece);
+
         Sleep(500);
         cont ++;
     }
