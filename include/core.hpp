@@ -18,10 +18,11 @@ typedef struct{
     int level;
     int eliminated_lines;
     float gravity_time;
+    float fast_gravity_time;
 } StatesVariables;
 
 void clean_piece_path(StatesVariables *states, CurrentPiece *current_piece);
-void gravity(StatesVariables *states, CurrentPiece *current_piece);
+void gravity(StatesVariables *states, CurrentPiece *current_piece, bool soft_drop);
 void update_score(StatesVariables states, int eliminated_lines);
 void update(Board *board, CurrentPiece *current_piece, StatesVariables *states);
 

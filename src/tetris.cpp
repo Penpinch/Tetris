@@ -1,6 +1,7 @@
 # include <iostream>
 using namespace std;
 # include <windows.h>
+# include <stdlib.h>
 
 # include "bag_random.hpp"
 # include "board.hpp"
@@ -39,22 +40,20 @@ int main(){
     Board board;
     for(int a = 0; a < BOARD_HEIGHT; a++){ for(int b = 0; b < BOARD_WIDTH; b++){ board.grid[a][b] = 0; } } // Initialize the board with 0.
     CurrentPiece current_piece = {&board, 0, 0, EMPTY, 0};
-    StatesVariables states = {&board, 0, 0, 0, 0.5};
+    StatesVariables states = {&board, 0, 0, 0, 0.8, 0.05};
 
     current_piece = {&board, 7, 15, PIECE_J, 0};
     set_piece(&board, 0, 20, PIECE_I, 1);
     set_piece(&board, 4, 20, PIECE_I, 1);
 
-    int game_on = true, cont = 0;
+    int game_on = true;
     while(game_on){
-        cout << cont;
         update(&board, &current_piece, &states);
-
-        cout << endl << "Eliminated lines: " << states.eliminated_lines << endl;
+        // cout << endl << "Eliminated lines: " << states.eliminated_lines << endl;
         temporal_show(board, current_piece);
 
-        Sleep(500);
-        cont ++;
+        Sleep(33);
+        system("cls");
     }
 
     return 0;

@@ -24,73 +24,31 @@ void update_score(StatesVariables states, int eliminated_lines){
     states.score += eliminated_lines * (states.level + 1);
 }
 
-/* --- Maybe this won't be needed later ---
-void clean_piece_path(StatesVariables *states, CurrentPiece *current_piece){
-    Blocks piece_shape;
-    get_blocks(current_piece->piece_type, current_piece->rotation, &piece_shape);
-    for(int x = 0; x < 4; x++){
-        for(int y = 0; y < 4; y++){
-            if(piece_shape.block[y][x] == 1){
-                set_block(states->board, current_piece->current_x + x, current_piece->current_y + y, EMPTY);
-            }
-        }
-    }
-} */
+void gravity(StatesVariables *states, CurrentPiece *current_piece, bool soft_drop){
+    static DWORD start = 0;
+    DWORD end = GetTickCount();    
+    DWORD time_difference = end - start;
 
-void gravity(StatesVariables *states, CurrentPiece *current_piece){
-    static clock_t start = clock();
-    clock_t end;
-    bool moved = false;
-    float time_difference = 0;
+    float speed = (soft_drop) ? states->fast_gravity_time : states->gravity_time;
 
-    end = clock();
-    time_difference = ((float)(end - start)) / CLOCKS_PER_SEC;
-
-    if(time_difference > states->gravity_time){ moved = go_down(current_piece); start = clock();
+    if(time_difference >= (DWORD)(speed * 1000)){
+        (void)go_down(current_piece); 
+        start = end; 
     }
 }
 
 void update(Board *board, CurrentPiece *current_piece, StatesVariables *states){
-    bool moved = false;
-    int key;
+    static bool up_was_pressed = false;
 
-    key = _getch(); // Leer el primer código
-    if(key == 224){ // 224 indica tecla especial(flechas)
-        key = _getch(); // Leer el segundo código
+    if((GetAsyncKeyState(VK_UP) & 0x8000) && up_was_pressed == true){ // Up arrow.
+        rotate(current_piece); 
+        up_was_pressed = true;
+    } else { up_was_pressed = false; }
 
-        switch(key){
-            case 72: //Arriba
-                rotate(current_piece);
-                break;
-            case 80: //Abajo
-                moved = go_down(current_piece); 
-                break;  
-            case 75: //Izquierda
-                move_to_left(current_piece); 
-                break;
-            case 77: //Derecha
-                move_to_right(current_piece); 
-                break;
-        }
-    }
+    if(GetAsyncKeyState(VK_LEFT) & 0x8000){ move_to_left(current_piece); } // Left arrow.
+    if(GetAsyncKeyState(VK_RIGHT) & 0x8000){ move_to_right(current_piece); } // Right arrow
+    bool soft_drop = GetAsyncKeyState(VK_DOWN) & 0x8000; // Down arrow.
 
-    gravity(states, current_piece);
+    gravity(states, current_piece, soft_drop);
     states->eliminated_lines += check_lines(board);
 }
-
-// set_piece(board, 19, -1, PIECE_L, 3);
-// set_piece(board, 19, 7, PIECE_J, 0);
-// set_piece(board, 18, 4, PIECE_O, 0);
-// set_piece(board, 19, 5, PIECE_S, 1);
-// set_piece(board, 19, 2, PIECE_Z, 1);
-// set_piece(board, 20, 0, PIECE_I, 1);
-// set_piece(board, 17, 6, PIECE_T, 1);
-
-// void update(){
-    //     // gravedad (la pieza baja)
-    //     // fijar pieza si colisiona
-    //     // limpiar líneas
-    //     // generar nueva pieza
-    //     // detectar game over
-    //     // actualizar score
-// }
