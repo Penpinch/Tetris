@@ -13,7 +13,7 @@
 //input(), reset(), game_over()
 // nivel / velocidad
 
-void update_score(StatesVariables states, int eliminated_lines){
+void update_score(StatesVariables *states, int eliminated_lines){
     switch(eliminated_lines){
         case 0: eliminated_lines = 0; break;
         case 1: eliminated_lines = SINGLE_; break;
@@ -21,7 +21,7 @@ void update_score(StatesVariables states, int eliminated_lines){
         case 3: eliminated_lines = TRIPLE_; break;
         case 4: eliminated_lines = TETRIS; break;
     }
-    states.score += eliminated_lines * (states.level + 1);
+    states->score += eliminated_lines * (states->level + 1);
 }
 
 void gravity(StatesVariables *states, CurrentPiece *current_piece, bool soft_drop){
@@ -32,23 +32,38 @@ void gravity(StatesVariables *states, CurrentPiece *current_piece, bool soft_dro
     float speed = (soft_drop) ? states->fast_gravity_time : states->gravity_time;
 
     if(time_difference >= (DWORD)(speed * 1000)){
-        (void)go_down(current_piece); 
+        int go_down_result = go_down(current_piece); 
+        if(go_down_result == GAME_OVER){ states->game_over = true; }
         start = end; 
     }
 }
 
 void update(Board *board, CurrentPiece *current_piece, StatesVariables *states){
     static bool up_was_pressed = false;
+    static bool space_was_pressed = false;
 
-    if((GetAsyncKeyState(VK_UP) & 0x8000) && up_was_pressed == true){ // Up arrow.
+    // -- ROTATION --
+    if((GetAsyncKeyState(VK_UP) & 0x8000) && up_was_pressed == false){
         rotate(current_piece); 
         up_was_pressed = true;
     } else { up_was_pressed = false; }
 
-    if(GetAsyncKeyState(VK_LEFT) & 0x8000){ move_to_left(current_piece); } // Left arrow.
-    if(GetAsyncKeyState(VK_RIGHT) & 0x8000){ move_to_right(current_piece); } // Right arrow
-    bool soft_drop = GetAsyncKeyState(VK_DOWN) & 0x8000; // Down arrow.
+    // -- LATERAL MOVEMENTS --
+    if(GetAsyncKeyState(VK_LEFT) & 0x8000){ move_to_left(current_piece); }
+    if(GetAsyncKeyState(VK_RIGHT) & 0x8000){ move_to_right(current_piece); }
+
+    // -- HARD DROP --
+    if((GetAsyncKeyState(VK_SPACE) & 0x8000) && space_was_pressed == false){
+        while(go_down(current_piece) == true){}
+        space_was_pressed = true;
+    } else {space_was_pressed = false; }
+
+    // -- SOFT DROP --
+    bool soft_drop = GetAsyncKeyState(VK_DOWN) & 0x8000;
 
     gravity(states, current_piece, soft_drop);
-    states->eliminated_lines += check_lines(board);
+
+    int eliminated_lines_single_move = check_lines(board);
+    update_score(states, eliminated_lines_single_move);
+    states->eliminated_lines += eliminated_lines_single_move;
 }

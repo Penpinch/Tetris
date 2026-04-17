@@ -50,10 +50,10 @@ void rotate(CurrentPiece *actual){
     }
 }
 
-bool go_down(CurrentPiece *actual){
+int go_down(CurrentPiece *actual){
     if(can_move(actual, actual->current_x, actual->current_y + 1, actual->rotation)){
         actual->current_y += 1;
-        return true;
+        return WENT_DOWN;
     }
     set_piece(actual->game_board, actual->current_x, actual->current_y, actual->piece_type, actual->rotation);
 
@@ -61,7 +61,12 @@ bool go_down(CurrentPiece *actual){
     actual->current_x = BOARD_WIDTH / 2 - 2;
     actual->current_y = 0;
     actual->rotation = 0;
-    return false;
+
+    if(can_move(actual, actual->current_x, actual->current_y, actual->rotation) == false){
+        return GAME_OVER;
+    }
+
+    return CRASHED;
 }
 
 /* --- TEST ---

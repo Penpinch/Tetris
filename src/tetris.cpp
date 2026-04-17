@@ -40,7 +40,7 @@ int main(){
     Board board;
     for(int a = 0; a < BOARD_HEIGHT; a++){ for(int b = 0; b < BOARD_WIDTH; b++){ board.grid[a][b] = 0; } } // Initialize the board with 0.
     CurrentPiece current_piece = {&board, 0, 0, EMPTY, 0};
-    StatesVariables states = {&board, 0, 0, 0, 0.8, 0.05};
+    StatesVariables states = {&board, 0, 0, 0, 0.8, 0.05, false};
 
     current_piece = {&board, 7, 15, PIECE_J, 0};
     set_piece(&board, 0, 20, PIECE_I, 1);
@@ -49,11 +49,15 @@ int main(){
     int game_on = true;
     while(game_on){
         update(&board, &current_piece, &states);
-        // cout << endl << "Eliminated lines: " << states.eliminated_lines << endl;
+
+        if(states.game_over == true){ printf("Game over."); game_on = false; }
+
+        cout << endl << "Eliminated lines: " << states.eliminated_lines << endl;
+        cout << "Score: " << states.score << endl;
         temporal_show(board, current_piece);
 
         Sleep(33);
-        system("cls");
+        if(game_on == true){ system("cls"); }
     }
 
     return 0;
