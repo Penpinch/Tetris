@@ -7,7 +7,7 @@
 void init_current_piece(Board *board, CurrentPiece *actual){
     actual->game_board = board;
     actual->piece_type = next_piece();
-    actual->current_x = BOARD_WIDTH / 2 - 2;
+    actual->current_x = (BOARD_WIDTH >> 1) - 2; // Same than '/2'. Just to use Bitwise operators.
     actual->current_y = 0;
     actual->rotation = 0;
 }
@@ -58,7 +58,7 @@ int go_down(CurrentPiece *actual){
     set_piece(actual->game_board, actual->current_x, actual->current_y, actual->piece_type, actual->rotation);
 
     actual->piece_type = next_piece();
-    actual->current_x = BOARD_WIDTH / 2 - 2;
+    actual->current_x = (BOARD_WIDTH >> 1) - 2; // Same than '/2'. Just to use Bitwise operators.
     actual->current_y = 0;
     actual->rotation = 0;
 

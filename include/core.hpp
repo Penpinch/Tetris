@@ -3,7 +3,7 @@
 
 # include "board.hpp"
 # include "current_piece.hpp"
-
+# include "pieces.hpp"
 // typedef enum{
 //     PLAYING, PAUSED, GAME_OVER
 // } GameStates;
@@ -20,10 +20,12 @@ typedef struct{
     float gravity_time;
     float fast_gravity_time;
     bool game_over;
+    int hold_piece_type;
+    bool can_be_holded;
+    Blocks hold_block;
 } StatesVariables;
 
-bool check_game_over(CurrentPiece *current_piece);
-void clean_piece_path(StatesVariables *states, CurrentPiece *current_piece);
+void hold_piece(StatesVariables *states, CurrentPiece *current_piece);
 void gravity(StatesVariables *states, CurrentPiece *current_piece, bool soft_drop);
 void update_score(StatesVariables *states, int eliminated_lines);
 void update(Board *board, CurrentPiece *current_piece, StatesVariables *states);
