@@ -1,10 +1,6 @@
 # include "board.hpp"
 # include "pieces.hpp"
 
-bool is_empty(Board board, int x, int y){
-    return (board.grid[x][y] == 0) ? true : false;
-}
-
 void set_block(Board *board, int x, int y, int piece_type){
     board->grid[y][x] = piece_type;
 }

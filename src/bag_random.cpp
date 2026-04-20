@@ -10,11 +10,17 @@ void swap(int *num1, int *num2){ // Made with Google help.
 
 void shuffle(int arr[]){  // Made with Google help.
     int j = 0;
-
     for(int i = EXISTING_PIECES - 1; i > 0; i--){
-        j = rand() % (i + 1); //EXISTING_PIECES
+        j = rand() % (i + 1);
         swap(&arr[i], &arr[j]);
     }
+}
+
+void queue_init(Queue *bag){
+    srand(time(NULL));
+    bag->front = 0;
+    bag->back = 0;
+    bag->existing_elements = 0;
 }
 
 bool empty(Queue *bag){ return (bag->existing_elements == 0) ? true : false; }
@@ -29,7 +35,6 @@ void queue_back_push(Queue *bag, int value){
 }
 
 void queue_front_pop(Queue *bag){
-
     bag->existing_elements --;
     bag->front++;
     if(bag->front == EXISTING_PIECES){ bag->front = 0; }
@@ -38,13 +43,6 @@ void queue_front_pop(Queue *bag){
 int front(Queue *bag){
     if(!empty(bag)){ return bag->elements[bag->front]; }
     return -1;
-}
-
-void queue_init(Queue *bag){
-    srand(time(NULL));
-    bag->front = 0;
-    bag->back = 0;
-    bag->existing_elements = 0;
 }
 
 int next_piece(){
@@ -62,18 +60,8 @@ int next_piece(){
 
         for(int i = 0; i < EXISTING_PIECES; i++){ queue_back_push(&bag, new_bag[i]); }
     }
-
     next_on_queue = front(&bag);
     queue_front_pop(&bag);
 
     return next_on_queue;
 }
-
-// --- TEST ---
-// # include <stdio.h>
-// int main(){
-    // for(int i = 0; i < 5; i++){
-    //     for(int i = 0; i < EXISTING_PIECES; i++){ int test = next_piece(); printf("Next piece: %d\n", test); } printf("\n");
-    // }
-//     return 0;
-// }

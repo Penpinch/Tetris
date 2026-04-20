@@ -11,7 +11,7 @@ typedef struct{
 extern Queue bag;
 
 void swap(int *num1, int *num2);
-void shuffle(int arr[], int num);
+void shuffle(int arr[]);
 void queue_init(Queue *bag);
 bool empty(Queue *bag);
 bool full(Queue *bag);

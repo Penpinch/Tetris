@@ -10,8 +10,7 @@ typedef struct{
     int grid[BOARD_HEIGHT][BOARD_WIDTH];
 } Board;
 
-bool is_empty(Board *board, int x, int y);
 void set_block(Board *board, int x, int y, int piece_type);
-void set_piece(Board *board, int x, int y, int piece_type, int rotation);
+void set_piece(Board *board, int piece_x, int piece_y, int piece_type, int rotation);
 
 # endif 
