@@ -25,6 +25,21 @@ void update_score(StatesVariables *states, int eliminated_lines){
     states->score += eliminated_lines * (states->level + 1);
 }
 
+void spawn_next_piece(StatesVariables *states, CurrentPiece *current_piece){
+    current_piece->piece_type = states->next_piece_type;
+    states->next_piece_type = next_piece();
+    memcpy(states->next_block.block, tetris_pieces[states->next_piece_type - 1][0], sizeof(int) * 16);
+
+    current_piece->current_x = (BOARD_WIDTH >> 1) - 2; // Same than '/2'. Just to use Bitwise operators.
+    current_piece->current_y = 0;
+    current_piece->rotation = 0;
+    states->can_be_holded = true;
+
+    if(can_move(current_piece, current_piece->current_x, current_piece->current_y, current_piece->rotation) == false){
+        states->game_over = true;
+    }
+}
+
 void gravity(StatesVariables *states, CurrentPiece *current_piece, bool soft_drop){
     static DWORD start = 0;
     DWORD end = GetTickCount();    
@@ -35,8 +50,7 @@ void gravity(StatesVariables *states, CurrentPiece *current_piece, bool soft_dro
     if(time_difference >= (DWORD)(speed * 1000)){
         int go_down_result = go_down(current_piece); 
         if(go_down_result <= 0){
-            states->can_be_holded = true;
-            if(go_down_result == GAME_OVER){ states->game_over = true; }
+            spawn_next_piece(states, current_piece);
         }
         start = end; 
     }
@@ -83,11 +97,9 @@ void update(Board *board, CurrentPiece *current_piece, StatesVariables *states){
 
     // -- HARD DROP --
     if((GetAsyncKeyState(VK_SPACE) & 0x8000) && space_was_pressed == false){
-        int hold_res;
-        while((hold_res = go_down(current_piece)) == true){}
-
-        states->can_be_holded = true;
-        if(hold_res == GAME_OVER){ states->game_over = true; }
+        while((go_down(current_piece)) == true){}
+        spawn_next_piece(states, current_piece);
+        // if(hold_res == GAME_OVER){ states->game_over = true; }
 
         space_was_pressed = true;
     } else {space_was_pressed = false; }

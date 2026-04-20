@@ -57,42 +57,5 @@ int go_down(CurrentPiece *actual){
     }
     set_piece(actual->game_board, actual->current_x, actual->current_y, actual->piece_type, actual->rotation);
 
-    actual->piece_type = next_piece();
-    actual->current_x = (BOARD_WIDTH >> 1) - 2; // Same than '/2'. Just to use Bitwise operators.
-    actual->current_y = 0;
-    actual->rotation = 0;
-
-    if(can_move(actual, actual->current_x, actual->current_y, actual->rotation) == false){
-        return GAME_OVER;
-    }
-
     return CRASHED;
 }
-
-/* --- TEST ---
-# include  <iostream>
-using namespace std;
-
-int main(){
-    Board board;
-    Current_piece actual;
-    for (int i=0; i<BOARD_HEIGHT; i++)
-    for (int j=0; j<BOARD_WIDTH; j++)
-            board.grid[i][j]=0;
-
-            init_current_piece(&board, &actual);
-            
-            cout << "Posicion inicial: (" << actual.currect_x << "," << actual.currect_y << ")\n";
-    move_to_right(&actual);
-    cout << "Despues de derecha: (" << actual.currect_x << "," << actual.currect_y << ")\n";
-    move_to_left(&actual); move_to_left(&actual);
-    cout << "Despues de izquierda (desde posicion inicial): (" << actual.currect_x << "," << actual.currect_y << ")\n";
-    rotate(&actual);
-    cout << "Despues de rotar: rotacion=" << actual.rotation << endl;
-    for(int i=0; i<5; i++){
-        go_down(&actual); cout << "Bajando " << i+1 << ":(" << actual.currect_x << "," << actual.currect_y << ")\n";
-    }
-    cout << "Nueva pieza generada: " << actual.piece_type << endl;
-    return 0;
-}
-*/

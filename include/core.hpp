@@ -23,11 +23,14 @@ typedef struct{
     int hold_piece_type;
     bool can_be_holded;
     Blocks hold_block;
+    int next_piece_type;
+    Blocks next_block;
 } StatesVariables;
 
-void hold_piece(StatesVariables *states, CurrentPiece *current_piece);
-void gravity(StatesVariables *states, CurrentPiece *current_piece, bool soft_drop);
 void update_score(StatesVariables *states, int eliminated_lines);
+void spawn_next_piece(StatesVariables *states, CurrentPiece *current_piece);
+void gravity(StatesVariables *states, CurrentPiece *current_piece, bool soft_drop);
+void hold_piece(StatesVariables *states, CurrentPiece *current_piece);
 void update(Board *board, CurrentPiece *current_piece, StatesVariables *states);
 
 # endif

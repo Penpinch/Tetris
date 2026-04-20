@@ -24,22 +24,37 @@ bool piece_occupies(CurrentPiece piece, int x, int y){ // Made with ChatGPT.
     return false;
 }
 
-void temporal_show(Board board, CurrentPiece current_piece, StatesVariables s){
+void temporal_show(Board board, CurrentPiece current_piece, StatesVariables s){ // Esto se ve terrible. Que horror.
     cout << endl;
     for(int i = 0; i < BOARD_HEIGHT; i++){
-        if(2 < i && i <= 8){
+        if(1 < i && i <= 7){
             switch(i){
-                case 3:
+                case 2:
                     printf("|----|"); break;
-                case 4:
+                case 3:
                     printf("|"); for(int i = 0; i < 4; i++){ printf("%d", s.hold_block.block[0][i]); }; printf("|"); break;
-                case 5:
+                case 4:
                     printf("|"); for(int i = 0; i < 4; i++){ printf("%d", s.hold_block.block[1][i]); }; printf("|"); break;
-                case 6:
+                case 5:
                     printf("|"); for(int i = 0; i < 4; i++){ printf("%d", s.hold_block.block[2][i]); }; printf("|"); break;
-                case 7:
+                case 6:
                     printf("|"); for(int i = 0; i < 4; i++){ printf("%d", s.hold_block.block[3][i]); }; printf("|"); break;
-                case 8:
+                case 7:
+                    printf("|----|"); break;
+            }
+        } else if(8 < i && i <= 14){
+            switch(i){
+                case 9:
+                    printf("|----|"); break;
+                case 10:
+                    printf("|"); for(int i = 0; i < 4; i++){ printf("%d", s.next_block.block[0][i]); }; printf("|"); break;
+                case 11:
+                    printf("|"); for(int i = 0; i < 4; i++){ printf("%d", s.next_block.block[1][i]); }; printf("|"); break;
+                case 12:
+                    printf("|"); for(int i = 0; i < 4; i++){ printf("%d", s.next_block.block[2][i]); }; printf("|"); break;
+                case 13:
+                    printf("|"); for(int i = 0; i < 4; i++){ printf("%d", s.next_block.block[3][i]); }; printf("|"); break;
+                case 14:
                     printf("|----|"); break;
             }
         } else { printf("      "); }
@@ -57,11 +72,12 @@ int main(){
     Board board;
     for(int a = 0; a < BOARD_HEIGHT; a++){ for(int b = 0; b < BOARD_WIDTH; b++){ board.grid[a][b] = 0; } } // Initialize the board with 0.
     CurrentPiece current_piece = {&board, 0, 0, EMPTY, 0};
-    Blocks hb;
-    for(int i = 0; i < 4; i++){ for(int j = 0; j < 4; j++){ hb.block[i][j] = 0; } }
-    StatesVariables states = {&board, 0, 0, 0, 0.8, 0.05, false, EMPTY, true, hb};
+    Blocks h_b, nx_p; // Block for hold_block and for next_block.
+    for(int i = 0; i < 4; i++){ for(int j = 0; j < 4; j++){ h_b.block[i][j] = 0; nx_p.block[i][j] = 0; } } // Init .h_b, nx_p
+    StatesVariables states = {&board, 0, 0, 0, 0.8, 0.05, false, EMPTY, true, h_b, EMPTY, nx_p};
 
-    current_piece = {&board, 5, 0, PIECE_I, 0};
+    current_piece.piece_type = next_piece();
+    states.next_piece_type = next_piece();
 
     int game_on = true;
     while(game_on){
