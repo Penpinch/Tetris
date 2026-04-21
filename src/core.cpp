@@ -1,4 +1,5 @@
 # include <windows.h>
+# include <math.h>
 # include <string.h>
 # include <conio.h>
 # include <stdio.h>
@@ -23,6 +24,14 @@ void update_score(StatesVariables *states, int eliminated_lines){
         case 4: eliminated_lines = TETRIS; break;
     }
     states->score += eliminated_lines * (states->level + 1);
+}
+
+void update_difficulty(StatesVariables *states){
+    states->level = states->choosed_level + (states->eliminated_lines / 10);
+    float delay = 0.8f * pow(0.9f, states->level - 1);
+
+    if(delay < 0.1f){ states->gravity_time = 0.1f; }
+    else { states->gravity_time = delay; }
 }
 
 void spawn_next_piece(StatesVariables *states, CurrentPiece *current_piece){
@@ -112,4 +121,5 @@ void update(Board *board, CurrentPiece *current_piece, StatesVariables *states){
     int eliminated_lines_single_move = check_lines(board);
     update_score(states, eliminated_lines_single_move);
     states->eliminated_lines += eliminated_lines_single_move;
+    update_difficulty(states);
 }

@@ -15,6 +15,7 @@ typedef enum{
 typedef struct{
     Board *board;
     unsigned long int score;
+    int choosed_level;
     int level;
     int eliminated_lines;
     float gravity_time;
@@ -28,6 +29,7 @@ typedef struct{
 } StatesVariables;
 
 void update_score(StatesVariables *states, int eliminated_lines);
+void update_difficulty(StatesVariables *states);
 void spawn_next_piece(StatesVariables *states, CurrentPiece *current_piece);
 void gravity(StatesVariables *states, CurrentPiece *current_piece, bool soft_drop);
 void hold_piece(StatesVariables *states, CurrentPiece *current_piece);

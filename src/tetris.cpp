@@ -1,5 +1,6 @@
 # include <iostream>
 using namespace std;
+# include <stdio.h>
 # include <windows.h>
 # include <stdlib.h>
 
@@ -73,20 +74,22 @@ int main(){
     for(int a = 0; a < BOARD_HEIGHT; a++){ for(int b = 0; b < BOARD_WIDTH; b++){ board.grid[a][b] = 0; } } // Initialize the board with 0.
     CurrentPiece current_piece = {&board, 0, 0, EMPTY, 0};
     Blocks h_b, nx_p; // Block for hold_block and for next_block.
-    for(int i = 0; i < 4; i++){ for(int j = 0; j < 4; j++){ h_b.block[i][j] = 0; nx_p.block[i][j] = 0; } } // Init .h_b, nx_p
-    StatesVariables states = {&board, 0, 0, 0, 0.8, 0.05, false, EMPTY, true, h_b, EMPTY, nx_p};
+    for(int i = 0; i < 4; i++){ for(int j = 0; j < 4; j++){ h_b.block[i][j] = 0; nx_p.block[i][j] = 0; } } // Init h_b, nx_p
+    StatesVariables states = {&board, 0, 0, 0, 0, 0.8, 0.05, false, EMPTY, true, h_b, EMPTY, nx_p};
 
     current_piece.piece_type = next_piece();
     states.next_piece_type = next_piece();
-
+    update_difficulty(&states);
     int game_on = true;
     while(game_on){
         update(&board, &current_piece, &states);
 
         if(states.game_over == true){ printf("Game over."); game_on = false; }
 
-        cout << endl << "Eliminated lines: " << states.eliminated_lines << endl;
-        cout << "Score: " << states.score << endl;
+        cout << endl << "Eliminated lines: " << states.eliminated_lines << "\t";
+        cout << "Score: " << states.score << "\t";
+        cout << "Level: " << states.level << "\t";
+        cout << endl << "Speed: " << states.gravity_time;
         temporal_show(board, current_piece, states);
 
         Sleep(33);
