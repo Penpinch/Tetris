@@ -5,15 +5,16 @@
 # include <stdio.h>
 
 # include <time.h>
+# include "current_piece.hpp"
 # include "core.hpp"
 # include "bag_random.hpp"
-# include "current_piece.hpp"
 # include "board.hpp"
 # include "lines.hpp"
 # include "pieces.hpp"
 
 // reset(), 
-// nivel / velocidad
+
+KeysFunctions key_actions[256] = {NULL}; // Functon pointer.
 
 void update_score(StatesVariables *states, int eliminated_lines){
     switch(eliminated_lines){
@@ -65,7 +66,7 @@ void gravity(StatesVariables *states, CurrentPiece *current_piece, bool soft_dro
     }
 }
 
-void hold_piece(StatesVariables *states, CurrentPiece *current_piece){
+void hold_piece(CurrentPiece *current_piece, StatesVariables *states){
     if(states->can_be_holded == false){ return; }
     if(states->hold_piece_type == EMPTY){
         states->hold_piece_type = current_piece->piece_type;
@@ -83,43 +84,49 @@ void hold_piece(StatesVariables *states, CurrentPiece *current_piece){
     states->can_be_holded = false;
 }
 
+void hard_drop(CurrentPiece *current_piece, StatesVariables *states){
+    while((go_down(current_piece)) == 1){}
+    spawn_next_piece(states, current_piece);
+}
+
+void init_keyboard(CurrentPiece *current_piece, StatesVariables *states){ // Just to practice function pointers.
+    key_actions[VK_UP] = rotate_right; // ROTATION TO THE RIGHT
+    key_actions[VK_LEFT] = move_to_left; // LEFT
+    key_actions[VK_RIGHT] = move_to_right; // RIGHT
+    key_actions[VK_SPACE] = hard_drop; // HARD DROP
+    key_actions['c'] = hold_piece; //HOLD
+    key_actions['C'] = hold_piece; //HOLD
+    key_actions['z'] = rotate_left; // ROTATION TO THE LEFT
+    key_actions['Z'] = rotate_left; // ROTATION TO THE LEFT
+}
+
+void input(CurrentPiece *current_piece, StatesVariables *states, InputState *input_state){ // Made with a lot of AI guidance.
+    static bool key_was_down[256] = {false};
+    int keys[] = {'C', 'Z', VK_UP, VK_LEFT, VK_RIGHT, VK_SPACE};
+    int active_keys = sizeof(keys) / sizeof(keys[0]);
+
+    for(int i = 0; i < active_keys; i++){
+        int vk = keys[i];
+        bool is_down = (GetAsyncKeyState(vk) & 0x8000);
+
+        if(is_down == true){
+            if(vk == VK_LEFT || vk == VK_RIGHT){ key_actions[vk](current_piece, states); }
+            else if(key_was_down[vk] == false){ key_actions[vk](current_piece, states); }
+        }
+        key_was_down[vk] = is_down;
+    }
+    input_state->soft_drop = GetAsyncKeyState(VK_DOWN) & 0x8000;
+}
+
 void update(Board *board, CurrentPiece *current_piece, StatesVariables *states){
-    static bool up_was_pressed = false;
-    static bool space_was_pressed = false;
-    static bool hold_was_pressed = false;
+    InputState input_state; // SOFT DROP
+    input(current_piece, states, &input_state);
 
-    // -- HOLD --
-    if((GetAsyncKeyState('C') & 0x8000) && hold_was_pressed == false){
-        hold_piece(states, current_piece);
-        hold_was_pressed = true;
-    } else { hold_was_pressed = false; }
-
-    // -- ROTATION --
-    if((GetAsyncKeyState(VK_UP) & 0x8000) && up_was_pressed == false){
-        rotate(current_piece); 
-        up_was_pressed = true;
-    } else { up_was_pressed = false; }
-
-    // -- LATERAL MOVEMENTS --
-    if(GetAsyncKeyState(VK_LEFT) & 0x8000){ move_to_left(current_piece); }
-    if(GetAsyncKeyState(VK_RIGHT) & 0x8000){ move_to_right(current_piece); }
-
-    // -- HARD DROP --
-    if((GetAsyncKeyState(VK_SPACE) & 0x8000) && space_was_pressed == false){
-        while((go_down(current_piece)) == true){}
-        spawn_next_piece(states, current_piece);
-        // if(hold_res == GAME_OVER){ states->game_over = true; }
-
-        space_was_pressed = true;
-    } else {space_was_pressed = false; }
-
-    // -- SOFT DROP --
-    bool soft_drop = GetAsyncKeyState(VK_DOWN) & 0x8000;
-
-    gravity(states, current_piece, soft_drop);
+    gravity(states, current_piece, input_state.soft_drop);
 
     int eliminated_lines_single_move = check_lines(board);
     update_score(states, eliminated_lines_single_move);
     states->eliminated_lines += eliminated_lines_single_move;
+
     update_difficulty(states);
 }

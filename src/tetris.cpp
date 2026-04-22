@@ -25,48 +25,46 @@ bool piece_occupies(CurrentPiece piece, int x, int y){ // Made with ChatGPT.
     return false;
 }
 
-void temporal_show(Board board, CurrentPiece current_piece, StatesVariables s){ // Esto se ve terrible. Que horror.
-    cout << endl;
+void temporal_show(Board board, CurrentPiece current_piece, StatesVariables s){ // Modified with AI.
+    printf("\n     ");
+    for(int j = 0; j < BOARD_WIDTH + 2; j++){ printf("#"); }
+    printf("\n");
+
     for(int i = 0; i < BOARD_HEIGHT; i++){
-        if(1 < i && i <= 7){
-            switch(i){
-                case 2:
-                    printf("|----|"); break;
-                case 3:
-                    printf("|"); for(int i = 0; i < 4; i++){ printf("%d", s.hold_block.block[0][i]); }; printf("|"); break;
-                case 4:
-                    printf("|"); for(int i = 0; i < 4; i++){ printf("%d", s.hold_block.block[1][i]); }; printf("|"); break;
-                case 5:
-                    printf("|"); for(int i = 0; i < 4; i++){ printf("%d", s.hold_block.block[2][i]); }; printf("|"); break;
-                case 6:
-                    printf("|"); for(int i = 0; i < 4; i++){ printf("%d", s.hold_block.block[3][i]); }; printf("|"); break;
-                case 7:
-                    printf("|----|"); break;
-            }
-        } else if(8 < i && i <= 14){
-            switch(i){
-                case 9:
-                    printf("|----|"); break;
-                case 10:
-                    printf("|"); for(int i = 0; i < 4; i++){ printf("%d", s.next_block.block[0][i]); }; printf("|"); break;
-                case 11:
-                    printf("|"); for(int i = 0; i < 4; i++){ printf("%d", s.next_block.block[1][i]); }; printf("|"); break;
-                case 12:
-                    printf("|"); for(int i = 0; i < 4; i++){ printf("%d", s.next_block.block[2][i]); }; printf("|"); break;
-                case 13:
-                    printf("|"); for(int i = 0; i < 4; i++){ printf("%d", s.next_block.block[3][i]); }; printf("|"); break;
-                case 14:
-                    printf("|----|"); break;
-            }
-        } else { printf("      "); }
+        if(i == 2){ printf("HOLD "); }
+        else if(i >= 3 && i <= 6){ 
+            printf(" %d%d%d%d", s.hold_block.block[i-3][0], s.hold_block.block[i-3][1], 
+                s.hold_block.block[i-3][2], s.hold_block.block[i-3][3]); 
+        }
+        else if(i == 9){ printf("NEXT "); }
+        else if(i >= 10 && i <= 13){ 
+            printf(" %d%d%d%d", s.next_block.block[i-10][0], s.next_block.block[i-10][1], 
+                s.next_block.block[i-10][2], s.next_block.block[i-10][3]); 
+        }
+        else{ printf("     "); }
+
+        printf("#"); 
 
         for(int j = 0; j < BOARD_WIDTH; j++){
             int value = board.grid[i][j];
+
             if(piece_occupies(current_piece, j, i)){ value = current_piece.piece_type; }
-            (value == 0) ? printf("*") : printf("%d", value);
+
+            if(value == 0){ printf("."); }
+            else{ printf("%d", value); }
         }
-    cout << endl;
+        printf("#\n");
     }
+    printf("     ");
+    for(int j = 0; j < BOARD_WIDTH + 2; j++){ printf("#"); }
+    printf("\n");
+}
+
+void gotoxy(int x, int y) { // Made with AI.
+    HANDLE hCon = GetStdHandle(STD_OUTPUT_HANDLE);
+    COORD dwPos;
+    dwPos.X = x; dwPos.Y = y;
+    SetConsoleCursorPosition(hCon, dwPos);
 }
 
 int main(){
@@ -80,11 +78,11 @@ int main(){
     current_piece.piece_type = next_piece();
     states.next_piece_type = next_piece();
     update_difficulty(&states);
-    int game_on = true;
-    while(game_on){
-        update(&board, &current_piece, &states);
+    init_keyboard(&current_piece, &states);
 
-        if(states.game_over == true){ printf("Game over."); game_on = false; }
+    while(states.game_over == false){
+        gotoxy(0, 0);
+        update(&board, &current_piece, &states);
 
         cout << endl << "Eliminated lines: " << states.eliminated_lines << "\t";
         cout << "Score: " << states.score << "\t";
@@ -92,8 +90,8 @@ int main(){
         cout << endl << "Speed: " << states.gravity_time;
         temporal_show(board, current_piece, states);
 
+        if(states.game_over == true){ printf("Game over.\n"); }
         Sleep(33);
-        if(game_on == true){ system("cls"); }
     }
 
     return 0;
