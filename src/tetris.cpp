@@ -1,71 +1,13 @@
-# include <iostream>
-using namespace std;
-# include <stdio.h>
-# include <windows.h>
-# include <stdlib.h>
+//g++ .\tetris.cpp .\core.cpp .\bag_random.cpp .\board.cpp .\current_piece.cpp .\lines.cpp .\pieces.cpp .\render.cpp -I..\include\ -I C:\raylib\raylib\src -L C:\raylib\raylib\src -lraylib -lopengl32 -lgdi32 -lwinmm -o "C:\Users\brand\OneDrive\Desktop\UAA\log programación\Tetris\output\core2.exe"
 
+# include "raylib.h"
 # include "bag_random.hpp"
 # include "board.hpp"
+# include "render.hpp"
 # include "core.hpp"
 # include "current_piece.hpp"
 # include "lines.hpp"
 # include "pieces.hpp"
-
-bool piece_occupies(CurrentPiece piece, int x, int y){ // Made with ChatGPT.
-    Blocks shape;
-    get_blocks(piece.piece_type, piece.rotation, &shape);
-
-    for(int i = 0; i < 4; i++){
-        for(int j = 0; j < 4; j++){
-            if(shape.block[j][i] == 1){
-                if(piece.current_x + i == x && piece.current_y + j == y){ return true; }
-            }
-        }
-    }
-    return false;
-}
-
-void temporal_show(Board board, CurrentPiece current_piece, StatesVariables s){ // Modified with AI.
-    printf("\n     ");
-    for(int j = 0; j < BOARD_WIDTH + 2; j++){ printf("#"); }
-    printf("\n");
-
-    for(int i = 0; i < BOARD_HEIGHT; i++){
-        if(i == 2){ printf("HOLD "); }
-        else if(i >= 3 && i <= 6){ 
-            printf(" %d%d%d%d", s.hold_block.block[i-3][0], s.hold_block.block[i-3][1], 
-                s.hold_block.block[i-3][2], s.hold_block.block[i-3][3]); 
-        }
-        else if(i == 9){ printf("NEXT "); }
-        else if(i >= 10 && i <= 13){ 
-            printf(" %d%d%d%d", s.next_block.block[i-10][0], s.next_block.block[i-10][1], 
-                s.next_block.block[i-10][2], s.next_block.block[i-10][3]); 
-        }
-        else{ printf("     "); }
-
-        printf("#"); 
-
-        for(int j = 0; j < BOARD_WIDTH; j++){
-            int value = board.grid[i][j];
-
-            if(piece_occupies(current_piece, j, i)){ value = current_piece.piece_type; }
-
-            if(value == 0){ printf("."); }
-            else{ printf("%d", value); }
-        }
-        printf("#\n");
-    }
-    printf("     ");
-    for(int j = 0; j < BOARD_WIDTH + 2; j++){ printf("#"); }
-    printf("\n");
-}
-
-void gotoxy(int x, int y) { // Made with AI.
-    HANDLE hCon = GetStdHandle(STD_OUTPUT_HANDLE);
-    COORD dwPos;
-    dwPos.X = x; dwPos.Y = y;
-    SetConsoleCursorPosition(hCon, dwPos);
-}
 
 int main(){
     Board board;
@@ -73,26 +15,40 @@ int main(){
     CurrentPiece current_piece = {&board, 0, 0, EMPTY, 0};
     Blocks h_b, nx_p; // Block for hold_block and for next_block.
     for(int i = 0; i < 4; i++){ for(int j = 0; j < 4; j++){ h_b.block[i][j] = 0; nx_p.block[i][j] = 0; } } // Init h_b, nx_p
-    StatesVariables states = {&board, 0, 0, 0, 0, 0.8, 0.05, false, EMPTY, true, h_b, EMPTY, nx_p};
+    StatesVariables states = {&board, 0, 0, 0, 0, 0.8, 0.05, false, false,EMPTY, true, h_b, EMPTY, nx_p};
 
     current_piece.piece_type = next_piece();
     states.next_piece_type = next_piece();
     update_difficulty(&states);
     init_keyboard(&current_piece, &states);
 
-    while(states.game_over == false){
-        gotoxy(0, 0);
+    int screen_width = 600, screen_height = 1000;
+    int board_widthRL = BOARD_WIDTH * CELL_SIZE, board_heightRL = BOARD_HEIGHT * CELL_SIZE;
+    int offset_x = (screen_width - board_widthRL) / 2, offset_y = (screen_height - board_heightRL) / 2; 
+
+    InitWindow(screen_width, screen_height, "Tetris");
+
+    char game_over_text[] = "GAME OVER", paused_text[] = "PAUSED";                               // <----- Change for something better.
+    int text_lenght = MeasureText(game_over_text, 50), pt_lenght = MeasureText(paused_text, 50); // <-----|
+
+    while(!WindowShouldClose()){
         update(&board, &current_piece, &states);
+        BeginDrawing();
+            ClearBackground(DARKGRAY);
 
-        cout << endl << "Eliminated lines: " << states.eliminated_lines << "\t";
-        cout << "Score: " << states.score << "\t";
-        cout << "Level: " << states.level << "\t";
-        cout << endl << "Speed: " << states.gravity_time;
-        temporal_show(board, current_piece, states);
-
-        if(states.game_over == true){ printf("Game over.\n"); }
-        Sleep(33);
+            if(states.paused == true){ // PAUSAR CON TECLA P
+                draw_game(&board, &current_piece, &states, offset_x, offset_y);
+                DrawRectangle(offset_x, offset_y, board_widthRL, board_heightRL, Fade(BLACK, 0.8f)); 
+                DrawText(paused_text, (screen_width - pt_lenght) / 2, (screen_height - 50) / 2, 50, WHITE);
+            }
+            else if(states.game_over == true){ 
+                draw_game(&board, &current_piece, &states, offset_x, offset_y);
+                DrawRectangle(offset_x, offset_y, board_widthRL, board_heightRL, Fade(BLACK, 0.8f)); 
+                DrawText(game_over_text, (screen_width - text_lenght) / 2, (screen_height - 50) / 2, 50, RED); 
+            } else{ draw_game(&board, &current_piece, &states, offset_x, offset_y); }
+        EndDrawing();
     }
+    CloseWindow();
 
     return 0;
 }

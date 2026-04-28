@@ -15,7 +15,8 @@ typedef struct{
 typedef void (*KeysFunctions)(CurrentPiece*, struct StatesVariables*); // Function pointer declaration.
 
 typedef enum{
-    GAME_OVER = -1, CRASHED, WENT_DOWN
+    // GAME_OVER = -1, 
+    CRASHED, WENT_DOWN
 } PieceState;
 
 void init_current_piece(Board *board, CurrentPiece *actual);

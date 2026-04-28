@@ -1,4 +1,4 @@
-# include <windows.h>
+# include "raylib.h"
 # include <math.h>
 # include <string.h>
 # include <conio.h>
@@ -11,8 +11,6 @@
 # include "board.hpp"
 # include "lines.hpp"
 # include "pieces.hpp"
-
-// reset(), 
 
 KeysFunctions key_actions[256] = {NULL}; // Functon pointer.
 
@@ -51,17 +49,15 @@ void spawn_next_piece(StatesVariables *states, CurrentPiece *current_piece){
 }
 
 void gravity(StatesVariables *states, CurrentPiece *current_piece, bool soft_drop){
-    static DWORD start = 0;
-    DWORD end = GetTickCount();    
-    DWORD time_difference = end - start;
+    static float start = 0;
+    float end = GetTime();    
+    float time_difference = end - start;
 
     float speed = (soft_drop) ? states->fast_gravity_time : states->gravity_time;
 
-    if(time_difference >= (DWORD)(speed * 1000)){
+    if(time_difference >= (float)speed){
         int go_down_result = go_down(current_piece); 
-        if(go_down_result <= 0){
-            spawn_next_piece(states, current_piece);
-        }
+        if(go_down_result <= 0){ spawn_next_piece(states, current_piece); }
         start = end; 
     }
 }
@@ -89,38 +85,55 @@ void hard_drop(CurrentPiece *current_piece, StatesVariables *states){
     spawn_next_piece(states, current_piece);
 }
 
+void pause(CurrentPiece *current_piece, StatesVariables *states){ 
+    if(states->paused == false){ states->paused = true; }
+    else{ states->paused = false; }
+}
+
 void init_keyboard(CurrentPiece *current_piece, StatesVariables *states){ // Just to practice function pointers.
-    key_actions[VK_UP] = rotate_right; // ROTATION TO THE RIGHT
-    key_actions[VK_LEFT] = move_to_left; // LEFT
-    key_actions[VK_RIGHT] = move_to_right; // RIGHT
-    key_actions[VK_SPACE] = hard_drop; // HARD DROP
-    key_actions['c'] = hold_piece; //HOLD
-    key_actions['C'] = hold_piece; //HOLD
-    key_actions['z'] = rotate_left; // ROTATION TO THE LEFT
-    key_actions['Z'] = rotate_left; // ROTATION TO THE LEFT
+    key_actions[KEY_UP] = rotate_right; // ROTATION TO THE RIGHT
+    key_actions[KEY_SPACE] = hard_drop; // HARD DROP
+    key_actions[KEY_P] = pause; // PAUSE
+    key_actions[KEY_C] = hold_piece; //HOLD
+    key_actions[KEY_Z] = rotate_left; // ROTATION TO THE LEFT
 }
 
 void input(CurrentPiece *current_piece, StatesVariables *states, InputState *input_state){ // Made with a lot of AI guidance.
-    static bool key_was_down[256] = {false};
-    int keys[] = {'C', 'Z', VK_UP, VK_LEFT, VK_RIGHT, VK_SPACE};
+    static float move_timer = 0;
+    float move_delay = 0.09f; // Lateral movements every 0.09 seconds.
+
+    if(IsKeyPressed(KEY_P)){ pause(current_piece, states); }
+    if(states->paused == true || states->game_over == true){ return; }
+
+
+    int keys[] = {KEY_C, KEY_Z, KEY_UP, KEY_SPACE};
     int active_keys = sizeof(keys) / sizeof(keys[0]);
 
     for(int i = 0; i < active_keys; i++){
-        int vk = keys[i];
-        bool is_down = (GetAsyncKeyState(vk) & 0x8000);
+        int key = keys[i];
 
-        if(is_down == true){
-            if(vk == VK_LEFT || vk == VK_RIGHT){ key_actions[vk](current_piece, states); }
-            else if(key_was_down[vk] == false){ key_actions[vk](current_piece, states); }
+        if(IsKeyPressed(key) == true){
+            if(key_actions[key] != NULL){ key_actions[key](current_piece, states); }
         }
-        key_was_down[vk] = is_down;
     }
-    input_state->soft_drop = GetAsyncKeyState(VK_DOWN) & 0x8000;
+
+    if(IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_RIGHT)){
+        move_timer += GetFrameTime();
+        if(move_timer >= move_delay){
+            if(IsKeyDown(KEY_LEFT)){ move_to_left(current_piece, states); }
+            if(IsKeyDown(KEY_RIGHT)){ move_to_right(current_piece, states); }
+            move_timer = 0;
+        }
+    } else{ move_timer = move_delay; }
+
+    input_state->soft_drop = IsKeyDown(KEY_DOWN);
 }
 
 void update(Board *board, CurrentPiece *current_piece, StatesVariables *states){
     InputState input_state; // SOFT DROP
     input(current_piece, states, &input_state);
+
+    if(states->paused == true || states->game_over == true){ return; }
 
     gravity(states, current_piece, input_state.soft_drop);
 
