@@ -15,9 +15,10 @@ int main(){
     CurrentPiece current_piece = {&board, 0, 0, EMPTY, 0};
     Blocks h_b, nx_p; // Block for hold_block and for next_block.
     for(int i = 0; i < 4; i++){ for(int j = 0; j < 4; j++){ h_b.block[i][j] = 0; nx_p.block[i][j] = 0; } } // Init h_b, nx_p
-    StatesVariables states = {&board, 0, 0, 0, 0, 0.8, 0.05, false, false,EMPTY, true, h_b, EMPTY, nx_p};
+    StatesVariables states = {&board, 0, 0, 0, 0, 0.8, 0.05, false, false, EMPTY, true, h_b, EMPTY, nx_p, false, false};
 
     current_piece.piece_type = next_piece();
+    current_piece.current_x = 3;
     states.next_piece_type = next_piece();
     update_difficulty(&states);
     init_keyboard(&current_piece, &states);
@@ -27,16 +28,17 @@ int main(){
     int offset_x = (screen_width - board_widthRL) / 2, offset_y = (screen_height - board_heightRL) / 2; 
 
     InitWindow(screen_width, screen_height, "Tetris");
+    SetExitKey(KEY_P);
 
     char game_over_text[] = "GAME OVER", paused_text[] = "PAUSED";                               // <----- Change for something better.
     int text_lenght = MeasureText(game_over_text, 50), pt_lenght = MeasureText(paused_text, 50); // <-----|
 
-    while(!WindowShouldClose()){
+    while(!WindowShouldClose() && !states.exit_raylib_window){
         update(&board, &current_piece, &states);
         BeginDrawing();
             ClearBackground(DARKGRAY);
 
-            if(states.paused == true){ // PAUSAR CON TECLA P
+            if(states.paused == true){ // PAUSAR CON TECLA P AND R WHILE PAUSE TO RESTART A NEW GAME
                 draw_game(&board, &current_piece, &states, offset_x, offset_y);
                 DrawRectangle(offset_x, offset_y, board_widthRL, board_heightRL, Fade(BLACK, 0.8f)); 
                 DrawText(paused_text, (screen_width - pt_lenght) / 2, (screen_height - 50) / 2, 50, WHITE);

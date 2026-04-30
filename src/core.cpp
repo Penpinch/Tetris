@@ -90,10 +90,38 @@ void pause(CurrentPiece *current_piece, StatesVariables *states){
     else{ states->paused = false; }
 }
 
+void reset(CurrentPiece *current_piece, StatesVariables *states){
+    for(int a = 0; a < BOARD_HEIGHT; a++){ for(int b = 0; b < BOARD_WIDTH; b++){ states->board->grid[a][b] = 0; } } // Reset board.
+
+    current_piece->piece_type = next_piece();
+    current_piece->current_x = 3;
+    current_piece->current_y = 0;
+    current_piece->rotation = 0;
+
+    states->score = 0;
+    states->choosed_level = 0;
+    states->level = 0;
+    states->eliminated_lines = 0;
+    states->gravity_time = 0.8;
+    states->fast_gravity_time = 0.05;
+    states->game_over = false;
+    states->paused = false;
+    states->hold_piece_type = EMPTY; 
+    states->can_be_holded = true; 
+    for(int i = 0; i < 4; i++){ for(int j = 0; j < 4; j++){ states->hold_block.block[i][j] = 0; } } // Reset hold_block.
+    states->next_piece_type = next_piece();
+    get_blocks(states->next_piece_type, 0, &states->next_block);
+    states->new_game = false;
+    update_difficulty(states);
+}
+
+void menu(CurrentPiece *current_piece, StatesVariables *states){
+
+}
+
 void init_keyboard(CurrentPiece *current_piece, StatesVariables *states){ // Just to practice function pointers.
     key_actions[KEY_UP] = rotate_right; // ROTATION TO THE RIGHT
     key_actions[KEY_SPACE] = hard_drop; // HARD DROP
-    key_actions[KEY_P] = pause; // PAUSE
     key_actions[KEY_C] = hold_piece; //HOLD
     key_actions[KEY_Z] = rotate_left; // ROTATION TO THE LEFT
 }
@@ -101,10 +129,15 @@ void init_keyboard(CurrentPiece *current_piece, StatesVariables *states){ // Jus
 void input(CurrentPiece *current_piece, StatesVariables *states, InputState *input_state){ // Made with a lot of AI guidance.
     static float move_timer = 0;
     float move_delay = 0.09f; // Lateral movements every 0.09 seconds.
-
-    if(IsKeyPressed(KEY_P)){ pause(current_piece, states); }
+    if(IsKeyPressed(KEY_P)){ states->exit_raylib_window = true; } // Change for a button on screen.
+    if(IsKeyPressed(KEY_ESCAPE)){ pause(current_piece, states); }
+    if(IsKeyPressed(KEY_R) && states->paused){ 
+        states->new_game = true; 
+        reset(current_piece, states); 
+        states->paused = false;
+        return; 
+    }
     if(states->paused == true || states->game_over == true){ return; }
-
 
     int keys[] = {KEY_C, KEY_Z, KEY_UP, KEY_SPACE};
     int active_keys = sizeof(keys) / sizeof(keys[0]);

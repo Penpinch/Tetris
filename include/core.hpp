@@ -9,6 +9,10 @@ typedef enum{
     SINGLE_ = 100, DOUBLE_ = 300, TRIPLE_ = 500, TETRIS = 800
 } BaseScore;
 
+typedef enum{
+    MAIN_MENU, PAUSED_MENU, NEW_GAME, RESUME
+} Menu; 
+
 typedef struct {
     bool soft_drop;
 }InputState;
@@ -28,6 +32,8 @@ typedef struct StatesVariables{
     Blocks hold_block;
     int next_piece_type;
     Blocks next_block;
+    bool new_game;
+    bool exit_raylib_window;
 } StatesVariables;
 
 void update_score(StatesVariables *states, int eliminated_lines);
@@ -37,6 +43,8 @@ void gravity(StatesVariables *states, CurrentPiece *current_piece, bool soft_dro
 void hold_piece(CurrentPiece *current_piece, StatesVariables *states);
 void hard_drop(CurrentPiece *current_piece, StatesVariables *states);
 void pause(CurrentPiece *current_piece, StatesVariables *states);
+void reset(CurrentPiece *current_piece, StatesVariables *states);
+void menu(CurrentPiece *current_piece, StatesVariables *states);
 void init_keyboard(CurrentPiece *current_piece, StatesVariables *states);
 void input(CurrentPiece *current_piece, StatesVariables *states, InputState *input_state);
 void update(Board *board, CurrentPiece *current_piece, StatesVariables *states);
