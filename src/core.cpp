@@ -112,11 +112,35 @@ void reset(CurrentPiece *current_piece, StatesVariables *states){
     states->next_piece_type = next_piece();
     get_blocks(states->next_piece_type, 0, &states->next_block);
     states->new_game = false;
-    update_difficulty(states);
+}   
+
+void paused_menu(CurrentPiece *current_piece, StatesVariables *states){
+    pause(current_piece, states);
+    int choice = 0; printf("choice: "); scanf("%d", &choice);
+    switch(choice){
+        case 1: pause(current_piece, states); break; // RESUME
+        case 2: // RESTART
+            if(states->choosed_level != 0){
+                int ch_l = states->choosed_level; 
+                reset(current_piece, states); 
+                states->choosed_level = ch_l; 
+            } else{
+                reset(current_piece, states); 
+            }
+            break;
+        case 3: reset(current_piece, states); states->paused = true; main_menu(current_piece, states); break; // EXIT--> GO TO MAIN MENU 
+    }
 }
 
-void menu(CurrentPiece *current_piece, StatesVariables *states){
-
+void main_menu(CurrentPiece *current_piece, StatesVariables *states){
+    int ch = 0; printf("menu choice: "); scanf("%d", &ch);
+    switch(ch){
+        case 1: reset(current_piece, states); break; // PLAY
+        case 2: // INITIAL LEVEL
+            int initial_level; printf("Initial level: "); scanf("%d", &initial_level);
+            states->choosed_level = initial_level; update_difficulty(states); break;
+        case 3: states->exit_raylib_window = true; break; // EXIT GAME(WINDOW)
+    }
 }
 
 void init_keyboard(CurrentPiece *current_piece, StatesVariables *states){ // Just to practice function pointers.
@@ -130,7 +154,7 @@ void input(CurrentPiece *current_piece, StatesVariables *states, InputState *inp
     static float move_timer = 0;
     float move_delay = 0.09f; // Lateral movements every 0.09 seconds.
     if(IsKeyPressed(KEY_P)){ states->exit_raylib_window = true; } // Change for a button on screen.
-    if(IsKeyPressed(KEY_ESCAPE)){ pause(current_piece, states); }
+    if(IsKeyPressed(KEY_ESCAPE)){ paused_menu(current_piece, states); }
     if(IsKeyPressed(KEY_R) && states->paused){ 
         states->new_game = true; 
         reset(current_piece, states); 

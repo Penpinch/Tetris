@@ -33,6 +33,11 @@ int main(){
     char game_over_text[] = "GAME OVER", paused_text[] = "PAUSED";                               // <----- Change for something better.
     int text_lenght = MeasureText(game_over_text, 50), pt_lenght = MeasureText(paused_text, 50); // <-----|
 
+    /* -------------------------------------------------------------------------------------
+    See core.cpp lines  117 - 144 to understand how this is working at this point.
+    ----------------------------------------------------------------------------------------*/
+    main_menu(&current_piece, &states);
+
     while(!WindowShouldClose() && !states.exit_raylib_window){
         update(&board, &current_piece, &states);
         BeginDrawing();
