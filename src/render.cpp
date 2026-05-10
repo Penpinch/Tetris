@@ -48,4 +48,59 @@ void draw_game(Board *board, CurrentPiece *current_piece, StatesVariables *state
             }
         }
     }
+
+    draw_hold_piece(states, offset_x, offset_y);
+    draw_next_piece(states, offset_x, offset_y);
+}
+
+void draw_hold_piece(StatesVariables *states, int offset_x, int offset_y){
+    int hold_x = offset_x - (4 * CELL_SIZE) - 20, hold_y = offset_y + (3 * CELL_SIZE);
+    DrawRectangle(hold_x, hold_y, 4 * CELL_SIZE + 10, 4 * CELL_SIZE + 10, BLACK);
+
+    if(states->hold_piece_type == EMPTY){ return; }
+
+    Blocks shape;
+    get_blocks(states->hold_piece_type, 0, &shape);
+    Color current_color = get_piece_color(states->hold_piece_type);
+
+    DrawRectangle(hold_x, hold_y, 4 * CELL_SIZE + 10, 4 * CELL_SIZE + 10, BLACK);
+    for(int y = 0; y < 4; y++){
+        for(int x = 0; x < 4; x++){
+            if(shape.block[y][x] == 1){
+                int screen_x = x * CELL_SIZE;
+                int screen_y = y * CELL_SIZE;
+
+                DrawRectangle(
+                    hold_x + screen_x + MARGIN + 5, hold_y + screen_y + MARGIN + 5, 
+                    CELL_SIZE - MARGIN * 2, CELL_SIZE - MARGIN * 2, current_color
+                );
+            }
+        }
+    }
+}
+
+void draw_next_piece(StatesVariables *states, int offset_x, int offset_y){
+    int next_x = offset_x + (BOARD_WIDTH * CELL_SIZE) + 10, next_y = offset_y + (3 * CELL_SIZE);
+    DrawRectangle(next_x, next_y, 4 * CELL_SIZE + 10, 4 * CELL_SIZE + 10, BLACK);
+
+    if(states->next_piece_type == EMPTY){ return; }
+
+    Blocks shape;
+    get_blocks(states->next_piece_type, 0, &shape);
+    Color current_color = get_piece_color(states->next_piece_type);
+
+    // DrawRectangle(next_x + 10, next_y, 4 * CELL_SIZE, 4 * CELL_SIZE + 10, BLACK);
+    for(int y = 0; y < 4; y++){
+        for(int x = 0; x < 4; x++){
+            if(shape.block[y][x] == 1){
+                int screen_x = x * CELL_SIZE;
+                int screen_y = y * CELL_SIZE;
+
+                DrawRectangle(
+                    next_x + screen_x + MARGIN + 5, next_y + screen_y + MARGIN + 5, 
+                    CELL_SIZE - MARGIN * 2, CELL_SIZE - MARGIN * 2, current_color
+                );
+            }
+        }
+    }
 }
