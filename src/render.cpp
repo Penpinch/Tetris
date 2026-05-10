@@ -17,14 +17,14 @@ Color get_piece_color(int piece_type){
 }
 
 void draw_game(Board *board, CurrentPiece *current_piece, StatesVariables *states, int offset_x, int offset_y){
-    DrawRectangle(offset_x, offset_y, BOARD_WIDTH * CELL_SIZE, BOARD_HEIGHT * CELL_SIZE, BLACK);
+    DrawRectangle(offset_x, offset_y, BOARD_WIDTH * CELL_SIZE, (BOARD_HEIGHT - 2) * CELL_SIZE, BLACK);
 
-    for(int y = 0; y < BOARD_HEIGHT; y++){
+    for(int y = 2; y < BOARD_HEIGHT; y++){
         for(int x = 0; x < BOARD_WIDTH; x++){
             int type = board->grid[y][x];
             if(type != EMPTY){
                 DrawRectangle(
-                    (x * CELL_SIZE) + offset_x, (y * CELL_SIZE) + offset_y, 
+                    (x * CELL_SIZE) + offset_x + MARGIN, ((y - 2) * CELL_SIZE) + offset_y + MARGIN, 
                     CELL_SIZE - MARGIN * 2, CELL_SIZE - MARGIN * 2, get_piece_color(type)
                 );
             }
@@ -38,13 +38,18 @@ void draw_game(Board *board, CurrentPiece *current_piece, StatesVariables *state
     for(int y = 0; y < 4; y++){
         for(int x = 0; x < 4; x++){
             if(shape.block[y][x] == 1){
-                int screen_x = (current_piece->current_x + x) * CELL_SIZE;
-                int screen_y = (current_piece->current_y + y) * CELL_SIZE;
-
-                DrawRectangle(
-                    offset_x + screen_x + MARGIN, offset_y + screen_y + MARGIN, 
-                    CELL_SIZE - MARGIN * 2, CELL_SIZE - MARGIN * 2, current_color
-                );
+                int board_y = current_piece->current_y + y;
+                
+                if(board_y >= 2){
+                    int screen_x = (current_piece->current_x + x) * CELL_SIZE;
+                    // int screen_y = (current_piece->current_y + y) * CELL_SIZE;
+                    int screen_y = (board_y - 2) * CELL_SIZE;
+    
+                    DrawRectangle(
+                        offset_x + screen_x + MARGIN, offset_y + screen_y + MARGIN, 
+                        CELL_SIZE - MARGIN * 2, CELL_SIZE - MARGIN * 2, current_color
+                    );
+                }
             }
         }
     }
