@@ -10,7 +10,7 @@ typedef enum{
 } BaseScore;
 
 typedef enum{
-    MAIN_MENU, PAUSED_MENU, NEW_GAME, RESUME
+    MAIN_MENU, PAUSED_MENU, GAME_OVER, RESUME
 } Menu; 
 
 typedef struct {
@@ -28,14 +28,18 @@ typedef struct StatesVariables{
     bool game_over;
     bool paused;
     int hold_piece_type;
-    bool can_be_holded;
+    bool can_be_held;
     Blocks hold_block;
     int next_piece_type;
     Blocks next_block;
-    bool new_game;
+    bool new_game; // New game since a pause.
     bool exit_raylib_window;
+    long int best_scores[5];
 } StatesVariables;
 
+void write_file(long int best_scores[]);
+void read_file(long int read_scores[]);
+void update_best_scores(StatesVariables *states);
 void update_score(StatesVariables *states, int eliminated_lines);
 void update_difficulty(StatesVariables *states);
 void spawn_next_piece(StatesVariables *states, CurrentPiece *current_piece);
@@ -44,8 +48,6 @@ void hold_piece(CurrentPiece *current_piece, StatesVariables *states);
 void hard_drop(CurrentPiece *current_piece, StatesVariables *states);
 void pause(CurrentPiece *current_piece, StatesVariables *states);
 void reset(CurrentPiece *current_piece, StatesVariables *states);
-void main_menu(CurrentPiece *current_piece, StatesVariables *states);
-void paused_menu(CurrentPiece *current_piece, StatesVariables *states);
 void init_keyboard(CurrentPiece *current_piece, StatesVariables *states);
 void input(CurrentPiece *current_piece, StatesVariables *states, InputState *input_state);
 void update(Board *board, CurrentPiece *current_piece, StatesVariables *states);

@@ -1,11 +1,12 @@
 # include "raylib.h"
 # include <math.h>
 # include <string.h>
-# include <conio.h>
 # include <stdio.h>
+# include <errno.h>
 
 # include <time.h>
 # include "current_piece.hpp"
+// # include "render.hpp"
 # include "core.hpp"
 # include "bag_random.hpp"
 # include "board.hpp"
@@ -13,6 +14,37 @@
 # include "pieces.hpp"
 
 KeysFunctions key_actions[256] = {NULL}; // Functon pointer.
+
+void write_file(long int best_scores[]){
+    FILE *scores_file = fopen("../scores_file.txt", "w");
+    if(scores_file == NULL){ perror("Failed at opening the file."); return; }
+
+    fprintf(scores_file, "%ld %ld %ld %ld %ld", 
+        best_scores[0], best_scores[1], best_scores[2], best_scores[3], best_scores[4]);
+    fclose(scores_file);
+}
+
+void read_file(long int read_scores[]){
+    FILE *scores_file = fopen("../scores_file.txt", "r");
+    if(scores_file == NULL){ perror("Failed at opening the file."); return; }
+
+    if(fscanf(scores_file, "%ld %ld %ld %ld %ld", 
+        &read_scores[0], &read_scores[1], &read_scores[2], &read_scores[3], &read_scores[4]) != 5){
+        perror("Error while reading scores. ");
+    }
+    fclose(scores_file);
+}
+
+void update_best_scores(StatesVariables *states){
+    for(int i = 0; i < 5; i++){
+        if(states->score > states->best_scores[i]){
+            for(int j = 4; j > i; j--){ states->best_scores[j] = states->best_scores[j - 1]; }
+            states->best_scores[i] = states->score;
+            return;
+        }
+        if(states->score == states->best_scores[i]){ return; }
+    }
+}
 
 void update_score(StatesVariables *states, int eliminated_lines){
     switch(eliminated_lines){
@@ -41,7 +73,7 @@ void spawn_next_piece(StatesVariables *states, CurrentPiece *current_piece){
     current_piece->current_x = (BOARD_WIDTH >> 1) - 2; // Same than '/2'. Just to use Bitwise operators.
     current_piece->current_y = 0;
     current_piece->rotation = 0;
-    states->can_be_holded = true;
+    states->can_be_held = true;
 
     if(can_move(current_piece, current_piece->current_x, current_piece->current_y, current_piece->rotation) == false){
         states->game_over = true;
@@ -63,7 +95,7 @@ void gravity(StatesVariables *states, CurrentPiece *current_piece, bool soft_dro
 }
 
 void hold_piece(CurrentPiece *current_piece, StatesVariables *states){
-    if(states->can_be_holded == false){ return; }
+    if(states->can_be_held == false){ return; }
     if(states->hold_piece_type == EMPTY){
         states->hold_piece_type = current_piece->piece_type;
         memcpy(states->hold_block.block, tetris_pieces[states->hold_piece_type - 1][0], sizeof(int)*16);
@@ -77,7 +109,7 @@ void hold_piece(CurrentPiece *current_piece, StatesVariables *states){
     current_piece->current_x = (BOARD_WIDTH >> 1) - 2;
     current_piece->current_y = 0;
     current_piece->rotation = 0;
-    states->can_be_holded = false;
+    states->can_be_held = false;
 }
 
 void hard_drop(CurrentPiece *current_piece, StatesVariables *states){
@@ -107,41 +139,12 @@ void reset(CurrentPiece *current_piece, StatesVariables *states){
     states->game_over = false;
     states->paused = false;
     states->hold_piece_type = EMPTY; 
-    states->can_be_holded = true; 
+    states->can_be_held = true; 
     for(int i = 0; i < 4; i++){ for(int j = 0; j < 4; j++){ states->hold_block.block[i][j] = 0; } } // Reset hold_block.
     states->next_piece_type = next_piece();
     get_blocks(states->next_piece_type, 0, &states->next_block);
     states->new_game = false;
 }   
-
-void paused_menu(CurrentPiece *current_piece, StatesVariables *states){
-    pause(current_piece, states);
-    int choice = 0; printf("choice: "); scanf("%d", &choice);
-    switch(choice){
-        case 1: pause(current_piece, states); break; // RESUME
-        case 2: // RESTART
-            if(states->choosed_level != 0){
-                int ch_l = states->choosed_level; 
-                reset(current_piece, states); 
-                states->choosed_level = ch_l; 
-            } else{
-                reset(current_piece, states); 
-            }
-            break;
-        case 3: reset(current_piece, states); states->paused = true; main_menu(current_piece, states); break; // EXIT--> GO TO MAIN MENU 
-    }
-}
-
-void main_menu(CurrentPiece *current_piece, StatesVariables *states){
-    int ch = 0; printf("menu choice: "); scanf("%d", &ch);
-    switch(ch){
-        case 1: reset(current_piece, states); break; // PLAY
-        case 2: // INITIAL LEVEL
-            int initial_level; printf("Initial level: "); scanf("%d", &initial_level);
-            states->choosed_level = initial_level; update_difficulty(states); break;
-        case 3: states->exit_raylib_window = true; break; // EXIT GAME(WINDOW)
-    }
-}
 
 void init_keyboard(CurrentPiece *current_piece, StatesVariables *states){ // Just to practice function pointers.
     key_actions[KEY_UP] = rotate_right; // ROTATION TO THE RIGHT
@@ -153,14 +156,8 @@ void init_keyboard(CurrentPiece *current_piece, StatesVariables *states){ // Jus
 void input(CurrentPiece *current_piece, StatesVariables *states, InputState *input_state){ // Made with a lot of AI guidance.
     static float move_timer = 0;
     float move_delay = 0.09f; // Lateral movements every 0.09 seconds.
-    if(IsKeyPressed(KEY_P)){ states->exit_raylib_window = true; } // Change for a button on screen.
-    if(IsKeyPressed(KEY_ESCAPE)){ paused_menu(current_piece, states); }
-    if(IsKeyPressed(KEY_R) && states->paused){ 
-        states->new_game = true; 
-        reset(current_piece, states); 
-        states->paused = false;
-        return; 
-    }
+    if(IsKeyPressed(KEY_P)){ states->exit_raylib_window = true; }
+
     if(states->paused == true || states->game_over == true){ return; }
 
     int keys[] = {KEY_C, KEY_Z, KEY_UP, KEY_SPACE};
