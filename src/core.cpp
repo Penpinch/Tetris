@@ -6,7 +6,6 @@
 
 # include <time.h>
 # include "current_piece.hpp"
-// # include "render.hpp"
 # include "core.hpp"
 # include "bag_random.hpp"
 # include "board.hpp"

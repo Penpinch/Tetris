@@ -10,7 +10,7 @@ typedef enum{
 } BaseScore;
 
 typedef enum{
-    MAIN_MENU, PAUSED_MENU, GAME_OVER, RESUME
+    MAIN_MENU, PAUSED_MENU, GAME_OVER, RESUME, LEVEL
 } Menu; 
 
 typedef struct {
@@ -19,7 +19,7 @@ typedef struct {
 
 typedef struct StatesVariables{
     Board *board;
-    unsigned long int score;
+    long int score;
     int choosed_level;
     int level;
     int eliminated_lines;

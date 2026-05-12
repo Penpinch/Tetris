@@ -3,19 +3,128 @@
 # include "pieces.hpp"
 # include "core.hpp"
 
-void temporal_pause_screen(struct StatesVariables *states, int *ch){
-    BeginDrawing();
-    ClearBackground(PURPLE);
-    if(states->paused){
-        if(IsKeyPressed(KEY_ONE)){ *ch = 1; DrawText("1 pasued pressed", 500, 500, 50, GOLD); }
-        else if(IsKeyPressed(KEY_TWO)){ *ch = 2; DrawText("2 paused pressed", 500, 500, 50, GOLD); }
-        else if(IsKeyPressed(KEY_THREE)){ *ch = 3; DrawText("3 paused pressed", 500, 500, 50, GOLD); }
-    } else {
-        if(IsKeyPressed(KEY_ONE)){ *ch = 1; DrawText("1 main pressed", 500, 500, 50, GOLD); }
-        else if(IsKeyPressed(KEY_TWO)){ *ch = 2; DrawText("2 main pressed", 500, 500, 50, GOLD); }
-        else if(IsKeyPressed(KEY_THREE)){ *ch = 3; DrawText("3 main pressed", 500, 500, 50, GOLD); }
+// Definimos los estados posibles de la aplicación
+
+// Función auxiliar para dibujar texto centrado en un botón
+void DrawTextCentered(const char* text, Rectangle btn, int fontSize, Color color){
+    int textWidth = MeasureText(text, fontSize); //Se utiliza la función MeasureText() de Raylib. Esto mide cuántos píxeles ocupa el texto y permite colocarlo exactamente en el centro del botón, sin importar lo que escribas.
+    int textX = btn.x + (btn.width - textWidth) / 2; //En lugar de coordenadas fijas, ahora se usa el ancho de la ventana 
+    int textY = btn.y + (btn.height - fontSize) / 2; //para calcular el centro exacto: (screenWidth - buttonWidth) / 2.
+    DrawText(text, textX, textY, fontSize, color);
+}
+
+// Función auxiliar para dibujar texto centrado en la pantalla 
+void DrawTitleCentered(const char* text, int y, int fontSize, Color color){
+    int textWidth = MeasureText(text, fontSize); //Se utiliza la función MeasureText() de Raylib. Esto mide cuántos píxeles ocupa el texto y permite colocarlo exactamente en el centro del botón, sin importar lo que escribas.
+    int textX = (GetScreenWidth() - textWidth) / 2;
+    DrawText(text, textX, y, fontSize, color);
+}
+
+Menu update_menu(Menu menu_state, struct StatesVariables *states){
+    // --- CONFIGURACIÓN DE TAMAÑOS ---
+    const int screenWidth = GetScreenWidth();
+    const int screenHeight = GetScreenHeight();
+    int btnWidth = 260;
+    int btnHeight = 50;
+    int spacing = 20;
+    float btnX = (float)(screenWidth - btnWidth) / 2;
+    float startY = 180;
+
+    Vector2 mouse = GetMousePosition(); //Entrada del ratón.
+
+    Rectangle btn_play   = {btnX, startY, btnWidth, btnHeight};
+    Rectangle btn_level = {btnX, startY + (btnHeight + spacing), btnWidth, btnHeight};
+    Rectangle btn_exit  = {btnX, startY + (btnHeight + spacing) * 2, btnWidth, btnHeight};
+
+    Rectangle btn_resume = {btnX, 150, btnWidth, btnHeight};
+    Rectangle btn_restart = {btnX, 150 + (btnHeight + spacing), btnWidth, btnHeight};
+    Rectangle btn_exit_menu = {btnX, 150 + (btnHeight + spacing) * 2, btnWidth, btnHeight};
+
+    ClearBackground(RAYWHITE);
+
+    switch(menu_state){
+
+        // ---------------- MAIN MENU ----------------
+        case MAIN_MENU:{
+            ClearBackground(BEIGE);
+            DrawTitleCentered("Tetrix.", 80, 40, BLACK);
+            float centerX_menu_princ = (GetScreenWidth() - btn_play.width) / 2; //Centrar botones.
+            btn_play.x = centerX_menu_princ;
+            btn_level.x = centerX_menu_princ;
+            btn_exit.x = centerX_menu_princ;
+
+            // --- PLAY ---
+            if (CheckCollisionPointRec(mouse, btn_play)){//Detecta si el ratón. esta sobre el área el botón.
+                DrawRectangleRec(btn_play, GRAY);
+                if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){//Detecta si se presiona el ratón.
+                    menu_state = RESUME;//Cambia a determinada pantalla.
+                }
+            } else {DrawRectangleRec(btn_play, LIGHTGRAY);//Dibuja el ratón.
+                DrawTextCentered("PLAY", btn_play, 20, BLACK);
+            }
+
+            // --- CHOOSE LEVEL ---
+            if(CheckCollisionPointRec(mouse, btn_level)){
+                DrawRectangleRec(btn_level, GRAY);
+                if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
+                    menu_state = LEVEL;
+                }
+            } else {DrawRectangleRec(btn_level, LIGHTGRAY);
+                DrawTextCentered("CHOOSE LEVEL", btn_level, 20, BLACK);
+            }
+
+            // --- EXIT ---
+            if(CheckCollisionPointRec(mouse, btn_exit)){
+                DrawRectangleRec(btn_exit, GRAY);
+                if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
+                    states->exit_raylib_window = true;
+                }
+            } else {DrawRectangleRec(btn_exit, LIGHTGRAY);
+                DrawTextCentered("EXIT", btn_exit, 20, BLACK);
+            }
+        }break;
+
+        // ---------------- PLAY_MENU ----------------
+        case PAUSED_MENU:{
+            ClearBackground(DARKGRAY);
+            DrawTitleCentered("SELECCIONA MODO DE JUEGO", 80, 30, DARKBLUE);
+            float centerX = (GetScreenWidth() - btn_resume.width) / 2;
+            btn_resume.x = centerX;
+            btn_restart.x = centerX;
+            btn_exit_menu.x = centerX;
+
+            // --- RESUME ----
+            if(CheckCollisionPointRec(mouse, btn_resume)){
+                DrawRectangleRec(btn_resume, DARKGREEN);
+                if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
+                    menu_state = RESUME;
+                }
+            } else {DrawRectangleRec(btn_resume, GREEN);
+                DrawTextCentered("RESUME", btn_resume, 20, WHITE);
+            }
+
+            // --- RESTART ----
+            if(CheckCollisionPointRec(mouse, btn_restart)){
+                DrawRectangleRec(btn_restart, MAROON);
+                if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
+                    menu_state = RESUME;
+                }
+            } else {DrawRectangleRec(btn_restart, RED);
+                DrawTextCentered("RESTART", btn_restart, 20, WHITE);
+            }
+
+            // --- EXIT TO MENU ----
+            if(CheckCollisionPointRec(mouse, btn_exit_menu)){
+                DrawRectangleRec(btn_exit_menu, PURPLE);
+                if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
+                    menu_state = MAIN_MENU;
+                }
+            } else {DrawRectangleRec(btn_exit_menu, VIOLET);
+                DrawTextCentered("RETURN TO MENU", btn_exit_menu, 20, WHITE);
+            }
+        } break;
     }
-    EndDrawing();
+    return menu_state;
 }
 
 Color get_piece_color(int piece_type){
