@@ -32,28 +32,72 @@ bool can_move(CurrentPiece *actual, int new_x, int new_y, int new_rotation){
 }
 
 void move_to_left(CurrentPiece *actual, struct StatesVariables *states){
-    if(can_move(actual, actual->current_x - 1, actual->current_y, actual->rotation)){
-        actual->current_x -= 1;
-    }
+    if(can_move(actual, actual->current_x - 1, actual->current_y, actual->rotation)){ actual->current_x -= 1; }
 }
 
 void move_to_right(CurrentPiece *actual, struct StatesVariables *states){
-    if(can_move(actual, actual->current_x + 1, actual->current_y, actual->rotation)){
-        actual->current_x += 1;
-    }
+    if(can_move(actual, actual->current_x + 1, actual->current_y, actual->rotation)){ actual->current_x += 1; }
 }
 
 void rotate_right(CurrentPiece *actual, struct StatesVariables *states){
     int new_rotation = (actual->rotation + 1) % 4;
-    if(can_move(actual, actual->current_x, actual->current_y, new_rotation)){
-        actual->rotation=new_rotation;
+    if(can_move(actual, actual->current_x, actual->current_y, new_rotation)){ actual->rotation = new_rotation; return; }
+
+    if(can_move(actual, actual->current_x - 1, actual->current_y, new_rotation)){ // Move to the left.
+        actual->current_x -= 1;
+        actual->rotation = new_rotation;
+        return;
+    }
+
+    if(can_move(actual, actual->current_x + 1, actual->current_y, new_rotation)){ // Move to the right.
+        actual->current_x += 1;
+        actual->rotation = new_rotation;
+        return;
+    }
+
+    if(actual->piece_type == PIECE_I){ // Special case for I piece.
+        if(can_move(actual, actual->current_x - 2, actual->current_y, new_rotation)){ // Move to the left twice.
+            actual->current_x -= 2;
+            actual->rotation = new_rotation;
+            return;
+        }
+
+        if(can_move(actual, actual->current_x + 2, actual->current_y, new_rotation)){ // Move to the right twice.
+            actual->current_x += 2;
+            actual->rotation = new_rotation;
+            return;
+        }
     }
 }
 
 void rotate_left(CurrentPiece *actual, struct StatesVariables *states){
     int new_rotation = (actual->rotation + 3) % 4;
-    if(can_move(actual, actual->current_x, actual->current_y, new_rotation)){
+    if(can_move(actual, actual->current_x, actual->current_y, new_rotation)){ actual->rotation = new_rotation; }
+
+        if(can_move(actual, actual->current_x - 1, actual->current_y, new_rotation)){ // Move to the left.
+        actual->current_x -= 1;
         actual->rotation = new_rotation;
+        return;
+    }
+
+    if(can_move(actual, actual->current_x + 1, actual->current_y, new_rotation)){ // Move to the right.
+        actual->current_x += 1;
+        actual->rotation = new_rotation;
+        return;
+    }
+
+    if(actual->piece_type == PIECE_I){ // Special case for I piece.
+        if(can_move(actual, actual->current_x - 2, actual->current_y, new_rotation)){ // Move to the left twice.
+            actual->current_x -= 2;
+            actual->rotation = new_rotation;
+            return;
+        }
+
+        if(can_move(actual, actual->current_x + 2, actual->current_y, new_rotation)){ // Move to the right twice.
+            actual->current_x += 2;
+            actual->rotation = new_rotation;
+            return;
+        }
     }
 }
 
