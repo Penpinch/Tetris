@@ -196,3 +196,9 @@ void update(Board *board, CurrentPiece *current_piece, StatesVariables *states){
 
     update_difficulty(states);
 }
+
+void update_level(StatesVariables *states){
+    if(states->choosed_level < 20){ states->choosed_level += 5; }
+    else { states->choosed_level = 0; }
+    update_difficulty(states); //menu_state = MAIN_MENU;
+}

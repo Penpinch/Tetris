@@ -7,8 +7,6 @@
 # include "lines.hpp"
 # include "pieces.hpp"
 
-# include <stdio.h> // --------TEMPORAL( console )------------
-
 int main(){
     Board board;
     for(int a = 0; a < BOARD_HEIGHT; a++){ for(int b = 0; b < BOARD_WIDTH; b++){ board.grid[a][b] = 0; } } // Initialize the board with 0.
@@ -38,47 +36,46 @@ int main(){
     
     Texture2D background_image;
     background_image = LoadTexture("../tetris_background.png");
-    
+
     while(!WindowShouldClose() && !states.exit_raylib_window){
         DrawTexture(background_image, 0, 0, Fade(WHITE, 0.7f));  
-        
+
         write_file(states.best_scores);
         menu_state = update_menu(menu_state, &states);
 
         switch(menu_state){
             case MAIN_MENU:
-            read_file(states.best_scores);
-            if(IsKeyPressed(KEY_ONE) || IsKeyPressed(KEY_KP_1)){ reset(&current_piece, &states); menu_state = RESUME; }
-            if(IsKeyPressed(KEY_TWO || IsKeyPressed(KEY_KP_2))){
-                int initial_level; printf("Initial level: "); scanf("%d", &initial_level); reset(&current_piece, &states); 
-                states.choosed_level = initial_level; update_difficulty(&states); menu_state = RESUME;
-                }
+                read_file(states.best_scores);
+                if(IsKeyPressed(KEY_ONE) || IsKeyPressed(KEY_KP_1)){ update_difficulty(&states); menu_state = RESUME; }
+                if(IsKeyPressed(KEY_TWO) || IsKeyPressed(KEY_KP_2)){ update_difficulty(&states); menu_state = LEVEL; }
                 if(IsKeyPressed(KEY_THREE) || IsKeyPressed(KEY_KP_3)){ states.exit_raylib_window = true; }
                 break;
-                case PAUSED_MENU:
-                if(IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_ONE) || IsKeyPressed(KEY_KP_1)){ states.paused = false, menu_state = RESUME; }
-                if(IsKeyPressed(KEY_TWO) || IsKeyPressed(KEY_KP_2)){ reset(&current_piece, &states); menu_state = RESUME; }
-                if(IsKeyPressed(KEY_THREE) || IsKeyPressed(KEY_KP_3)){ menu_state = MAIN_MENU; }
+            case(LEVEL):
+                update_level(&states);
+                menu_state = MAIN_MENU;
                 break;
-            case GAME_OVER: // something is wrong here
-            if(IsKeyPressed(KEY_ENTER)){ reset(&current_piece, &states); menu_state = MAIN_MENU; write_file(states.best_scores); }
+            case PAUSED_MENU:
+                if(IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_ONE) || IsKeyPressed(KEY_KP_1)){ states.paused = false, menu_state = RESUME; }
+                if(IsKeyPressed(KEY_TWO) || IsKeyPressed(KEY_KP_2)){ 
+                    int lvl = states.choosed_level; 
+                    reset(&current_piece, &states); 
+                    states.choosed_level = lvl; 
+                    update_difficulty(&states);
+                    menu_state = RESUME; }
+                if(IsKeyPressed(KEY_THREE) || IsKeyPressed(KEY_KP_3)){ reset(&current_piece, &states); menu_state = MAIN_MENU; }
+                break;
+            case GAME_OVER:
+                if(IsKeyPressed(KEY_ENTER)){ reset(&current_piece, &states); menu_state = MAIN_MENU; write_file(states.best_scores); }
             case RESUME:
                 update(&board, &current_piece, &states);
                 if(IsKeyPressed(KEY_ESCAPE)){ states.paused = true; menu_state = PAUSED_MENU; }
-                if(states.game_over){ menu_state = GAME_OVER;}
+                if(states.game_over){ menu_state = GAME_OVER; }
                 break;
             }
 
             BeginDrawing(); // --- RENDER ---
-            if(menu_state == MAIN_MENU){
-                /*
-                DrawText("MAIN MENU", (screen_width - MeasureText("MAIN_MENU", 40) >> 1), 200, 40, GOLD);
-                DrawText("1. PLAY", (screen_width - MeasureText("1. PLAY", 20) >> 1), 350, 20, WHITE);
-                DrawText("2. LEVEL", (screen_width - MeasureText("2. LEVEL", 20) >> 1), 400 , 20, WHITE);
-                DrawText("3. EXIT", (screen_width - MeasureText("3. EXIT", 20) >> 1), 450 , 20, WHITE);
-                */
-                draw_scores(states.best_scores); // TO DO: se queda
-            } else {
+            if(menu_state == MAIN_MENU || menu_state == LEVEL){ draw_scores(states.best_scores); } 
+            else {
                 draw_game(&board, &current_piece, &states, offset_x, offset_y); // TO DO: se queda
                 DrawText(TextFormat("%lu", states.score), (screen_width / 4) - 100, 700, 25, WHITE); // Shows the score on screen
 

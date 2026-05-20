@@ -51,5 +51,6 @@ void reset(CurrentPiece *current_piece, StatesVariables *states);
 void init_keyboard(CurrentPiece *current_piece, StatesVariables *states);
 void input(CurrentPiece *current_piece, StatesVariables *states, InputState *input_state);
 void update(Board *board, CurrentPiece *current_piece, StatesVariables *states);
+void update_level(StatesVariables *states);
 
 # endif

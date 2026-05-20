@@ -35,10 +35,9 @@ Menu update_menu(Menu menu_state, struct StatesVariables *states){
     Rectangle btn_restart = {btnX, 150 + (btnHeight + spacing), btnWidth, btnHeight};
     Rectangle btn_exit_menu = {btnX, 150 + (btnHeight + spacing) * 2, btnWidth, btnHeight};
 
-    
     switch(menu_state){
         case MAIN_MENU:{ // ---------------- MAIN MENU ----------------
-            DrawTitleCentered("Tetrix.", 80, 140, WHITE);
+            DrawTitleCentered("Tetrix", 80, 140, WHITE);
             DrawRectangle((screenWidth - 300) / 2, 630, 300, 280, (Color){200, 200, 200, 150});
             float centerX_menu_princ = (GetScreenWidth() - btn_play.width) / 2;
             btn_play.x = centerX_menu_princ;
@@ -56,11 +55,11 @@ Menu update_menu(Menu menu_state, struct StatesVariables *states){
 
             if(CheckCollisionPointRec(mouse, btn_level)){ // --- CHOOSE LEVEL ---
                 DrawRectangleRec(btn_level, DARKGRAY);
-                DrawTextCentered("CHOOSE LEVEL", btn_level, 20, WHITE);
-                if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ menu_state = LEVEL; }
+                DrawTextCentered(TextFormat("Level %d", states->choosed_level), btn_level, 20, WHITE);
+                if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ menu_state = LEVEL;}
             } else {
                 DrawRectangleRec(btn_level, (Color){200, 200, 200, 150});
-                DrawTextCentered("CHOOSE LEVEL", btn_level, 20, BLACK);
+                DrawTextCentered(TextFormat("Level %d", states->choosed_level), btn_level, 20, BLACK);
             }
 
             if(CheckCollisionPointRec(mouse, btn_exit)){ // --- EXIT ---
