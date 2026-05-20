@@ -21,9 +21,9 @@ Menu update_menu(Menu menu_state, struct StatesVariables *states){
     const int screenHeight = GetScreenHeight();
     float btnWidth = 260;
     float btnHeight = 50;
-    float spacing = 20;
+    float spacing = 25;
     float btnX = (screenWidth - btnWidth) / 2;
-    float startY = 180;
+    float startY = 280;    
 
     Vector2 mouse = GetMousePosition(); // Mouse input.
 
@@ -35,44 +35,46 @@ Menu update_menu(Menu menu_state, struct StatesVariables *states){
     Rectangle btn_restart = {btnX, 150 + (btnHeight + spacing), btnWidth, btnHeight};
     Rectangle btn_exit_menu = {btnX, 150 + (btnHeight + spacing) * 2, btnWidth, btnHeight};
 
-    ClearBackground(RAYWHITE);
+    
     switch(menu_state){
         case MAIN_MENU:{ // ---------------- MAIN MENU ----------------
-            ClearBackground(BEIGE);
-            DrawTitleCentered("Tetrix.", 80, 40, BLACK);
+            DrawTitleCentered("Tetrix.", 80, 140, WHITE);
+            DrawRectangle((screenWidth - 300) / 2, 630, 300, 280, (Color){200, 200, 200, 150});
             float centerX_menu_princ = (GetScreenWidth() - btn_play.width) / 2;
             btn_play.x = centerX_menu_princ;
             btn_level.x = centerX_menu_princ;
             btn_exit.x = centerX_menu_princ;
 
             if(CheckCollisionPointRec(mouse, btn_play)){ // --- PLAY ---
-                DrawRectangleRec(btn_play, GRAY);
+                DrawRectangleRec(btn_play, DARKGRAY);
+                DrawTextCentered("PLAY", btn_play, 20, WHITE);
                 if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ menu_state = RESUME; }
             } else { 
-                DrawRectangleRec(btn_play, LIGHTGRAY);
+                DrawRectangleRec(btn_play, (Color){200, 200, 200, 150});
                 DrawTextCentered("PLAY", btn_play, 20, BLACK);
             }
 
             if(CheckCollisionPointRec(mouse, btn_level)){ // --- CHOOSE LEVEL ---
-                DrawRectangleRec(btn_level, GRAY);
+                DrawRectangleRec(btn_level, DARKGRAY);
+                DrawTextCentered("CHOOSE LEVEL", btn_level, 20, WHITE);
                 if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ menu_state = LEVEL; }
             } else {
-                DrawRectangleRec(btn_level, LIGHTGRAY);
+                DrawRectangleRec(btn_level, (Color){200, 200, 200, 150});
                 DrawTextCentered("CHOOSE LEVEL", btn_level, 20, BLACK);
             }
 
             if(CheckCollisionPointRec(mouse, btn_exit)){ // --- EXIT ---
-                DrawRectangleRec(btn_exit, GRAY);
+                DrawRectangleRec(btn_exit, DARKGRAY);
+                DrawTextCentered("EXIT", btn_exit, 20, WHITE);
                 if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ states->exit_raylib_window = true; }
             } else {
-                DrawRectangleRec(btn_exit, LIGHTGRAY);
+                DrawRectangleRec(btn_exit, (Color){200, 200, 200, 150});
                 DrawTextCentered("EXIT", btn_exit, 20, BLACK);
             }
         } break;
 
         case PAUSED_MENU:{ // ---------------- PLAY_MENU ----------------
-            ClearBackground(DARKGRAY);
-            DrawTitleCentered("SELECCIONA MODO DE JUEGO", 80, 30, DARKBLUE);
+            // DrawTitleCentered("SELECCIONA MODO DE JUEGO", 80, 30, DARKBLUE);
             float centerX = (GetScreenWidth() - btn_resume.width) / 2;
             btn_resume.x = centerX;
             btn_restart.x = centerX;
@@ -212,8 +214,8 @@ void draw_next_piece(struct StatesVariables *states, int offset_x, int offset_y)
 }
 
 void draw_scores(long int best_scores[]){
-    DrawText("HIGH SCORES: ", (GetScreenWidth() - MeasureText("HIGH SCORES: ", 30) >> 1), 660, 30, GOLD);
+    DrawText("HIGH SCORES: ", (GetScreenWidth() - MeasureText("HIGH SCORES: ", 30) >> 1), 660, 30, BLACK);
     for(int i = 0; i < 5; i++){
-        DrawText(TextFormat("%ld", best_scores[i]), (GetScreenWidth() - MeasureText(TextFormat("%ld", best_scores[i]), 25)) >> 1, 700 + (i * 40), 25, GOLD);
+        DrawText(TextFormat("%ld", best_scores[i]), (GetScreenWidth() - MeasureText(TextFormat("%ld", best_scores[i]), 25)) >> 1, 700 + (i * 40), 25, BLACK);
     }    
 }

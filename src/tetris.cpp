@@ -22,6 +22,7 @@ int main(){
     states.next_piece_type = next_piece();
     update_difficulty(&states);
     init_keyboard(&current_piece, &states);
+    read_file(states.best_scores);
 
     Menu menu_state = MAIN_MENU;
 
@@ -34,7 +35,13 @@ int main(){
     /* -------------------------------------------------------------------------------------
     See core.cpp lines  117 - 144 to understand how this is working at this point.
     ----------------------------------------------------------------------------------------*/
+    
+    Texture2D background_image;
+    background_image = LoadTexture("../tetris_background.png");
+    
     while(!WindowShouldClose() && !states.exit_raylib_window){
+        DrawTexture(background_image, 0, 0, Fade(WHITE, 0.7f));  
+        
         write_file(states.best_scores);
         menu_state = update_menu(menu_state, &states);
 
@@ -63,14 +70,13 @@ int main(){
             }
 
             BeginDrawing(); // --- RENDER ---
-
-            ClearBackground(DARKGRAY);
-
             if(menu_state == MAIN_MENU){
+                /*
                 DrawText("MAIN MENU", (screen_width - MeasureText("MAIN_MENU", 40) >> 1), 200, 40, GOLD);
                 DrawText("1. PLAY", (screen_width - MeasureText("1. PLAY", 20) >> 1), 350, 20, WHITE);
                 DrawText("2. LEVEL", (screen_width - MeasureText("2. LEVEL", 20) >> 1), 400 , 20, WHITE);
                 DrawText("3. EXIT", (screen_width - MeasureText("3. EXIT", 20) >> 1), 450 , 20, WHITE);
+                */
                 draw_scores(states.best_scores); // TO DO: se queda
             } else {
                 draw_game(&board, &current_piece, &states, offset_x, offset_y); // TO DO: se queda
