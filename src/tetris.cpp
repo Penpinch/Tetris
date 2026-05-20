@@ -30,6 +30,7 @@ int main(){
 
     InitWindow(screen_width, screen_height, "Tetris");
     SetExitKey(KEY_P);
+    InitAudioDevice();
     /* -------------------------------------------------------------------------------------
     See core.cpp lines  117 - 144 to understand how this is working at this point.
     ----------------------------------------------------------------------------------------*/
@@ -37,7 +38,11 @@ int main(){
     Texture2D background_image;
     background_image = LoadTexture("../tetris_background.png");
 
+    Music music = LoadMusicStream("../temporal_tetris_theme.mp3");
+    PlayMusicStream(music);
+
     while(!WindowShouldClose() && !states.exit_raylib_window){
+        UpdateMusicStream(music);
         DrawTexture(background_image, 0, 0, Fade(WHITE, 0.7f));  
 
         write_file(states.best_scores);
@@ -97,6 +102,8 @@ int main(){
             }
         EndDrawing();
     }
+    UnloadMusicStream(music);
+    CloseAudioDevice();
     CloseWindow();
 
     return 0;
