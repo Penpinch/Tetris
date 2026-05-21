@@ -24,6 +24,11 @@ Menu update_menu(Menu menu_state, struct StatesVariables *states){
     float spacing = 25;
     float btnX = (screenWidth - btnWidth) / 2;
     float startY = 280;    
+    float pausedY = 450;
+
+    int screen_width = 1000, screen_height = 1000;
+    int board_widthRL = BOARD_WIDTH * CELL_SIZE, board_heightRL = (BOARD_HEIGHT - 2) * CELL_SIZE;
+    int offset_x = (screen_width - board_widthRL) >> 1, offset_y = (screen_height - board_heightRL) >> 1; 
 
     Vector2 mouse = GetMousePosition(); // Mouse input.
 
@@ -31,14 +36,15 @@ Menu update_menu(Menu menu_state, struct StatesVariables *states){
     Rectangle btn_level = {btnX, startY + (btnHeight + spacing), btnWidth, btnHeight};
     Rectangle btn_exit = {btnX, startY + (btnHeight + spacing) * 2, btnWidth, btnHeight};
 
-    Rectangle btn_resume = {btnX, 150, btnWidth, btnHeight};
-    Rectangle btn_restart = {btnX, 150 + (btnHeight + spacing), btnWidth, btnHeight};
-    Rectangle btn_exit_menu = {btnX, 150 + (btnHeight + spacing) * 2, btnWidth, btnHeight};
+    Rectangle btn_resume = {btnX, pausedY, btnWidth, btnHeight};
+    Rectangle btn_restart = {btnX, pausedY + (btnHeight + spacing), btnWidth, btnHeight};
+    Rectangle btn_exit_menu = {btnX, pausedY + (btnHeight + spacing) * 2, btnWidth, btnHeight};
 
     switch(menu_state){
         case MAIN_MENU:{ // ---------------- MAIN MENU ----------------
             DrawTitleCentered("Tetrix", 80, 140, WHITE);
             DrawRectangle((screenWidth - 300) / 2, 630, 300, 280, (Color){200, 200, 200, 150});
+            draw_scores(states->best_scores); 
             float centerX_menu_princ = (GetScreenWidth() - btn_play.width) / 2;
             btn_play.x = centerX_menu_princ;
             btn_level.x = centerX_menu_princ;
@@ -55,11 +61,11 @@ Menu update_menu(Menu menu_state, struct StatesVariables *states){
 
             if(CheckCollisionPointRec(mouse, btn_level)){ // --- CHOOSE LEVEL ---
                 DrawRectangleRec(btn_level, DARKGRAY);
-                DrawTextCentered(TextFormat("Level %d", states->choosed_level), btn_level, 20, WHITE);
+                DrawTextCentered(TextFormat("LEVEL %d", states->choosed_level), btn_level, 20, WHITE);
                 if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ menu_state = LEVEL;}
             } else {
                 DrawRectangleRec(btn_level, (Color){200, 200, 200, 150});
-                DrawTextCentered(TextFormat("Level %d", states->choosed_level), btn_level, 20, BLACK);
+                DrawTextCentered(TextFormat("LEVEL %d", states->choosed_level), btn_level, 20, BLACK);
             }
 
             if(CheckCollisionPointRec(mouse, btn_exit)){ // --- EXIT ---
@@ -72,36 +78,46 @@ Menu update_menu(Menu menu_state, struct StatesVariables *states){
             }
         } break;
 
-        case PAUSED_MENU:{ // ---------------- PLAY_MENU ----------------
-            // DrawTitleCentered("SELECCIONA MODO DE JUEGO", 80, 30, DARKBLUE);
+        case PAUSED_MENU:{ // ---------------- PLAY MENU ----------------
             float centerX = (GetScreenWidth() - btn_resume.width) / 2;
             btn_resume.x = centerX;
             btn_restart.x = centerX;
             btn_exit_menu.x = centerX;
-
+            
+            DrawRectangle(offset_x, offset_y, board_widthRL, board_heightRL, Fade(BLACK, 0.8f)); 
+            DrawText("PAUSED", (screen_width - MeasureText("PAUSED", 50)) >> 1, 350, 50, WHITE);
+            
             if(CheckCollisionPointRec(mouse, btn_resume)){ // --- RESUME ----
-                DrawRectangleRec(btn_resume, DARKGREEN);
+                DrawRectangleRec(btn_resume, DARKGRAY);
+                DrawTextCentered("RESUME", btn_resume, 20, WHITE);
                 if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ menu_state = RESUME; }
             } else {
-                DrawRectangleRec(btn_resume, GREEN);
-                DrawTextCentered("RESUME", btn_resume, 20, WHITE);
+                DrawRectangleRec(btn_resume, (Color){200, 200, 200, 150});
+                DrawTextCentered("RESUME", btn_resume, 20, BLACK);
             }
 
             if(CheckCollisionPointRec(mouse, btn_restart)){ // --- RESTART ----
-                DrawRectangleRec(btn_restart, MAROON);
+                DrawRectangleRec(btn_restart, DARKGRAY);
+                DrawTextCentered("RESTART", btn_restart, 20, WHITE);
                 if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ menu_state = RESUME; }
             } else {
-                DrawRectangleRec(btn_restart, RED);
-                DrawTextCentered("RESTART", btn_restart, 20, WHITE);
+                DrawRectangleRec(btn_restart, (Color){200, 200, 200, 150});
+                DrawTextCentered("RESTART", btn_restart, 20, BLACK);
             }
 
-            if(CheckCollisionPointRec(mouse, btn_exit_menu)){ // --- EXIT TO MENU ----
-                DrawRectangleRec(btn_exit_menu, PURPLE);
+            if(CheckCollisionPointRec(mouse, btn_exit_menu)){ // --- RETURN TO MENU ----
+                DrawRectangleRec(btn_exit_menu, DARKGRAY);
+                DrawTextCentered("RETURN TO MENU", btn_exit_menu, 20, WHITE);
                 if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ menu_state = MAIN_MENU; }
             } else {
-                DrawRectangleRec(btn_exit_menu, VIOLET);
-                DrawTextCentered("RETURN TO MENU", btn_exit_menu, 20, WHITE);
+                DrawRectangleRec(btn_exit_menu, (Color){200, 200, 200, 150});
+                DrawTextCentered("RETURN TO MENU", btn_exit_menu, 20, BLACK);
             }
+        } break;
+        case GAME_OVER:{ // ---------------- GAME OVER ----------------
+            DrawRectangle(offset_x, offset_y, board_widthRL, board_heightRL, Fade(BLACK, 0.8f)); 
+            DrawText("GAME OVER", (screen_width - MeasureText("GAME OVER", 50)) >> 1, (screen_height - 50) >> 1, 50, RED); 
+            DrawText("Enter to main menu", (screen_width - MeasureText("Enter to main menu", 30)) >> 1, 750, 30, WHITE);
         } break;
     }
     return menu_state;
@@ -121,6 +137,8 @@ Color get_piece_color(int piece_type){
 }
 
 void draw_game(Board *board, CurrentPiece *current_piece, struct StatesVariables *states, int offset_x, int offset_y){
+    int screen_width = 1000, screen_height = 1000;
+
     DrawRectangle(offset_x, offset_y, BOARD_WIDTH * CELL_SIZE, (BOARD_HEIGHT - 2) * CELL_SIZE, BLACK);
 
     for(int y = 2; y < BOARD_HEIGHT; y++){
@@ -159,6 +177,12 @@ void draw_game(Board *board, CurrentPiece *current_piece, struct StatesVariables
 
     draw_hold_piece(states, offset_x, offset_y);
     draw_next_piece(states, offset_x, offset_y);
+
+    DrawRectangle(45, 680, 245, 180, BLACK);
+    DrawText(TextFormat("Score: %lu", states->score), (screen_width / 4) - 170, 705, 25, WHITE); 
+    DrawText(TextFormat("Level: %lu", states->level), (screen_width / 4) - 170, 745, 25, WHITE); 
+    DrawText(TextFormat("Eliminated : %lu", states->eliminated_lines), (screen_width / 4) - 170, 785, 25, WHITE); 
+    DrawText("lines", (screen_width / 4) - 150, 810, 25, WHITE);
 }
 
 void draw_hold_piece(struct StatesVariables *states, int offset_x, int offset_y){

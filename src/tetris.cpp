@@ -43,10 +43,7 @@ int main(){
 
     while(!WindowShouldClose() && !states.exit_raylib_window){
         UpdateMusicStream(music);
-        DrawTexture(background_image, 0, 0, Fade(WHITE, 0.7f));  
-
         write_file(states.best_scores);
-        menu_state = update_menu(menu_state, &states);
 
         switch(menu_state){
             case MAIN_MENU:
@@ -55,7 +52,7 @@ int main(){
                 if(IsKeyPressed(KEY_TWO) || IsKeyPressed(KEY_KP_2)){ update_difficulty(&states); menu_state = LEVEL; }
                 if(IsKeyPressed(KEY_THREE) || IsKeyPressed(KEY_KP_3)){ states.exit_raylib_window = true; }
                 break;
-            case(LEVEL):
+            case LEVEL:
                 update_level(&states);
                 menu_state = MAIN_MENU;
                 break;
@@ -76,30 +73,17 @@ int main(){
                 if(IsKeyPressed(KEY_ESCAPE)){ states.paused = true; menu_state = PAUSED_MENU; }
                 if(states.game_over){ menu_state = GAME_OVER; }
                 break;
-            }
+        }
 
-            BeginDrawing(); // --- RENDER ---
-            if(menu_state == MAIN_MENU || menu_state == LEVEL){ draw_scores(states.best_scores); } 
-            else {
-                draw_game(&board, &current_piece, &states, offset_x, offset_y); // TO DO: se queda
-                DrawText(TextFormat("%lu", states.score), (screen_width / 4) - 100, 700, 25, WHITE); // Shows the score on screen
-
-                if(menu_state == PAUSED_MENU){
-                    DrawRectangle(offset_x, offset_y, board_widthRL, board_heightRL, Fade(BLACK, 0.8f)); 
-                    DrawText("PAUSED", (screen_width - MeasureText("PAUSED", 50)) >> 1, 400, 50, WHITE);
-
-                    DrawText("1. RESUME", (screen_width - MeasureText("1. RESUME", 20)) >> 1, (screen_height >> 1) - 20, 20, GOLD);
-                    DrawText("2. RESTART", (screen_width - MeasureText("2. RESTART", 20)) >> 1, (screen_height >> 1) + 20, 20, GOLD);
-                    DrawText("3. MAIN MENU", (screen_width - MeasureText("3. MAIN MENU", 20)) >> 1, (screen_height >> 1) + 60, 20, GOLD);
-                }
-                if(menu_state == GAME_OVER){
-                    update_best_scores(&states); // TO DO: se queda
-
-                    DrawRectangle(offset_x, offset_y, board_widthRL, board_heightRL, Fade(BLACK, 0.8f)); 
-                    DrawText("GAME OVER", (screen_width - MeasureText("GAME OVER", 50)) >> 1, (screen_height - 50) >> 1, 50, RED); 
-                    DrawText("Enter to main menu", (screen_width - MeasureText("Enter to main menu", 30)) >> 1, 750, 30, WHITE);
-                }
-            }
+        BeginDrawing(); // --- RENDER (BASIC)--- 
+        ClearBackground(BLACK);
+        DrawTexture(background_image, 0, 0, Fade(WHITE, 0.7f));
+        
+        if(menu_state == RESUME || menu_state == PAUSED_MENU || menu_state == GAME_OVER){ 
+            draw_game(&board, &current_piece, &states, offset_x, offset_y); }
+        if(menu_state == GAME_OVER){ update_best_scores(&states); }
+        
+        menu_state = update_menu(menu_state, &states);
         EndDrawing();
     }
     UnloadMusicStream(music);
