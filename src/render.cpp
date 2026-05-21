@@ -242,3 +242,30 @@ void draw_scores(long int best_scores[]){
         DrawText(TextFormat("%ld", best_scores[i]), (GetScreenWidth() - MeasureText(TextFormat("%ld", best_scores[i]), 25)) >> 1, 700 + (i * 40), 25, BLACK);
     }    
 }
+void draw_instructions(){
+    DrawText("Instructions", (GetScreenWidth() - MeasureText("Instructions:", 40) >> 1), 50, 40, WHITE);
+
+    DrawText("Movements:", 50, 100, 30, WHITE);
+    DrawText("- Press the left and right arrows to lateral movements.", 70, 135, 25, WHITE);
+    DrawText("- Press the up arrow to rotate the piece 90 degrees to the right.", 70, 165, 25, WHITE);
+    DrawText("- Press the down arrow to drop the piece faster.", 70, 195, 25, WHITE);
+    DrawText("- Press the SPACE key to drop the piece until the bottom.", 70, 225, 25, WHITE);
+    DrawText("- Press the C key to save the current piece.", 70, 255, 25, WHITE);
+    DrawText("- Press the Z key to rotate the piece 90 degrees to the left.", 70, 285, 25, WHITE);
+
+    DrawText("From the main menu:", 50, 320, 30, WHITE);
+    DrawText("- Press the 1 key or the PLAY button to start the game.", 70, 355, 25, WHITE);
+    DrawText("- Press the 2 key or the LEVEL button to change the starting level.", 70, 385, 25, WHITE);
+    DrawText("- Press the 3 key or the EXIT button to close the game.", 70, 415, 25, WHITE);
+
+    DrawText("During gameplay press ESC key to pasue.", 50, 450, 30, WHITE);
+
+    DrawText("From the pause menu:", 50, 490, 30, WHITE);
+    DrawText("- Press the 1 key or the RESUME button to return to the game.", 70, 530, 25, WHITE);
+    DrawText("- Press the 2 key or the RESTART button to restart the game.", 70, 570, 25, WHITE);
+    DrawText("- Press the 3 key or the MAIN MENU button to return to the main menu.", 70, 610, 25, WHITE);
+
+    DrawText("Press the M key to mute/unmute the music.", 50, 650, 25, WHITE);
+
+    DrawText("Press the P key to exit the game.", 50, 690, 25, WHITE);
+}

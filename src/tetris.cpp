@@ -31,10 +31,7 @@ int main(){
     InitWindow(screen_width, screen_height, "Tetris");
     SetExitKey(KEY_P);
     InitAudioDevice();
-    /* -------------------------------------------------------------------------------------
-    See core.cpp lines  117 - 144 to understand how this is working at this point.
-    ----------------------------------------------------------------------------------------*/
-    
+
     Texture2D background_image;
     background_image = LoadTexture("../tetris_background.png");
 
@@ -52,6 +49,7 @@ int main(){
                 if(IsKeyPressed(KEY_ONE) || IsKeyPressed(KEY_KP_1)){ update_difficulty(&states); menu_state = RESUME; }
                 if(IsKeyPressed(KEY_TWO) || IsKeyPressed(KEY_KP_2)){ update_difficulty(&states); menu_state = LEVEL; }
                 if(IsKeyPressed(KEY_THREE) || IsKeyPressed(KEY_KP_3)){ states.exit_raylib_window = true; }
+                if(IsKeyPressed(KEY_I)){ menu_state = INSTRUCTION; }
                 break;
             case LEVEL:
                 update_level(&states);
@@ -67,6 +65,9 @@ int main(){
                     menu_state = RESUME; }
                 if(IsKeyPressed(KEY_THREE) || IsKeyPressed(KEY_KP_3)){ reset(&current_piece, &states); menu_state = MAIN_MENU; }
                 break;
+            case INSTRUCTION:
+                if(IsKeyPressed(KEY_THREE) || IsKeyPressed(KEY_KP_3)){ menu_state = MAIN_MENU; }    
+                break;
             case GAME_OVER:
                 if(IsKeyPressed(KEY_ENTER)){ reset(&current_piece, &states); menu_state = MAIN_MENU; write_file(states.best_scores); }
             case RESUME:
@@ -76,14 +77,16 @@ int main(){
                 break;
         }
 
-        BeginDrawing(); // --- RENDER (BASIC)--- 
+        BeginDrawing(); // --- RENDER --- 
         ClearBackground(BLACK);
-        DrawTexture(background_image, 0, 0, Fade(WHITE, 0.7f));
-        
+        DrawTextureV(background_image, Vector2{0.0f, 0.0f}, Fade(WHITE, 0.9f));
+
         if(menu_state == RESUME || menu_state == PAUSED_MENU || menu_state == GAME_OVER){ 
-            draw_game(&board, &current_piece, &states, offset_x, offset_y); }
+            draw_game(&board, &current_piece, &states, offset_x, offset_y); 
+        }
         if(menu_state == GAME_OVER){ update_best_scores(&states); }
-        
+        if(menu_state == INSTRUCTION){ DrawTextureV(background_image, Vector2{0.0f, 0.0f}, Fade(WHITE, 0.5f)); draw_instructions(); }
+
         menu_state = update_menu(menu_state, &states);
         EndDrawing();
     }

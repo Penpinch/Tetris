@@ -10,7 +10,7 @@ typedef enum{
 } BaseScore;
 
 typedef enum{
-    MAIN_MENU, PAUSED_MENU, GAME_OVER, RESUME, LEVEL
+    MAIN_MENU, PAUSED_MENU, GAME_OVER, RESUME, LEVEL, INSTRUCTION
 } Menu; 
 
 typedef struct {

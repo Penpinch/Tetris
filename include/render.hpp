@@ -21,5 +21,6 @@ void draw_game(Board *board, CurrentPiece *current_piece, struct StatesVariables
 void draw_hold_piece(struct StatesVariables *states, int offset_x, int offset_y);
 void draw_next_piece(struct StatesVariables *states, int offset_x, int offset_y);
 void draw_scores(long int best_scores[]);
+void draw_instructions();
 
 # endif
