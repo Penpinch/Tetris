@@ -38,11 +38,12 @@ int main(){
     Texture2D background_image;
     background_image = LoadTexture("../tetris_background.png");
 
-    Music music = LoadMusicStream("../temporal_tetris_theme.mp3");
+    Music music = LoadMusicStream("../temporal_tetris_theme.ogg");
     PlayMusicStream(music);
 
     while(!WindowShouldClose() && !states.exit_raylib_window){
         UpdateMusicStream(music);
+        if(IsKeyPressed(KEY_M)){ mute_unmute_music(music); }
         write_file(states.best_scores);
 
         switch(menu_state){

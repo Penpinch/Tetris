@@ -3,8 +3,8 @@
 # include <string.h>
 # include <stdio.h>
 # include <errno.h>
-
 # include <time.h>
+
 # include "current_piece.hpp"
 # include "core.hpp"
 # include "bag_random.hpp"
@@ -116,6 +116,11 @@ void hard_drop(CurrentPiece *current_piece, StatesVariables *states){
     spawn_next_piece(states, current_piece);
 }
 
+void mute_unmute_music(Music music){
+    if(IsMusicStreamPlaying(music)){ PauseMusicStream(music); } 
+    else { ResumeMusicStream(music); }
+}
+
 void pause(CurrentPiece *current_piece, StatesVariables *states){ 
     if(states->paused == false){ states->paused = true; }
     else{ states->paused = false; }
@@ -182,6 +187,12 @@ void input(CurrentPiece *current_piece, StatesVariables *states, InputState *inp
     input_state->soft_drop = IsKeyDown(KEY_DOWN);
 }
 
+void update_level(StatesVariables *states){
+    if(states->choosed_level < 20){ states->choosed_level += 5; }
+    else { states->choosed_level = 0; }
+    update_difficulty(states);
+}
+
 void update(Board *board, CurrentPiece *current_piece, StatesVariables *states){
     InputState input_state; // SOFT DROP
     input(current_piece, states, &input_state);
@@ -195,10 +206,4 @@ void update(Board *board, CurrentPiece *current_piece, StatesVariables *states){
     states->eliminated_lines += eliminated_lines_single_move;
 
     update_difficulty(states);
-}
-
-void update_level(StatesVariables *states){
-    if(states->choosed_level < 20){ states->choosed_level += 5; }
-    else { states->choosed_level = 0; }
-    update_difficulty(states); //menu_state = MAIN_MENU;
 }

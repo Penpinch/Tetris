@@ -46,11 +46,12 @@ void spawn_next_piece(StatesVariables *states, CurrentPiece *current_piece);
 void gravity(StatesVariables *states, CurrentPiece *current_piece, bool soft_drop);
 void hold_piece(CurrentPiece *current_piece, StatesVariables *states);
 void hard_drop(CurrentPiece *current_piece, StatesVariables *states);
+void mute_unmute_music(Music music);
 void pause(CurrentPiece *current_piece, StatesVariables *states);
 void reset(CurrentPiece *current_piece, StatesVariables *states);
 void init_keyboard(CurrentPiece *current_piece, StatesVariables *states);
 void input(CurrentPiece *current_piece, StatesVariables *states, InputState *input_state);
-void update(Board *board, CurrentPiece *current_piece, StatesVariables *states);
 void update_level(StatesVariables *states);
+void update(Board *board, CurrentPiece *current_piece, StatesVariables *states);
 
 # endif
