@@ -35,11 +35,13 @@ typedef struct StatesVariables{
     bool new_game; // New game since a pause.
     bool exit_raylib_window;
     long int best_scores[5];
+    char best_user[5][4];
 } StatesVariables;
 
-void write_file(long int best_scores[]);
-void read_file(long int read_scores[]);
-void update_best_scores(StatesVariables *states);
+void write_file(char best_user[][4], long int best_scores[]);
+void read_file(char best_user[][4], long int read_scores[]);
+bool capture_name(char best_user[][4], int position);
+int update_best_scores(StatesVariables *states);
 void update_score(StatesVariables *states, int eliminated_lines);
 void update_difficulty(StatesVariables *states);
 void spawn_next_piece(StatesVariables *states, CurrentPiece *current_piece);

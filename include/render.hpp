@@ -14,13 +14,13 @@ struct StatesVariables; // Forward Declaration.
 
 void DrawTextCentered(const char* text, Rectangle btn, int fontSize, Color color);
 void DrawTitleCentered(const char* text, int y, int fontSize, Color color);
-Menu update_menu(Menu menu_state, struct StatesVariables *states);
+Menu update_menu(Menu menu_state, struct StatesVariables *states, int score_position);
 
 Color get_piece_color(int piece_type);
 void draw_game(Board *board, CurrentPiece *current_piece, struct StatesVariables *states, int offset_x, int offset_y);
 void draw_hold_piece(struct StatesVariables *states, int offset_x, int offset_y);
 void draw_next_piece(struct StatesVariables *states, int offset_x, int offset_y);
-void draw_scores(long int best_scores[]);
+void draw_scores(char best_user[][4], long int best_scores[]);
 void draw_instructions();
 
 # endif

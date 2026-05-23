@@ -14,35 +14,71 @@
 
 KeysFunctions key_actions[256] = {NULL}; // Functon pointer.
 
-void write_file(long int best_scores[]){
+void write_file(char best_user[][4], long int best_scores[]){
     FILE *scores_file = fopen("../scores_file.txt", "w");
     if(scores_file == NULL){ perror("Failed at opening the file."); return; }
 
-    fprintf(scores_file, "%ld %ld %ld %ld %ld", 
+    fprintf(scores_file, "%s %s %s %s %s %ld %ld %ld %ld %ld", 
+        best_user[0], best_user[1], best_user[2], best_user[3], best_user[4],
         best_scores[0], best_scores[1], best_scores[2], best_scores[3], best_scores[4]);
     fclose(scores_file);
 }
 
-void read_file(long int read_scores[]){
+void read_file(char best_user[][4], long int read_scores[]){
     FILE *scores_file = fopen("../scores_file.txt", "r");
     if(scores_file == NULL){ perror("Failed at opening the file."); return; }
 
-    if(fscanf(scores_file, "%ld %ld %ld %ld %ld", 
-        &read_scores[0], &read_scores[1], &read_scores[2], &read_scores[3], &read_scores[4]) != 5){
+    if(fscanf(scores_file, "%s %s %s %s %s %ld %ld %ld %ld %ld", 
+        best_user[0], best_user[1], best_user[2], best_user[3], best_user[4],
+        &read_scores[0], &read_scores[1], &read_scores[2], &read_scores[3], &read_scores[4]) != 10){
         perror("Error while reading scores. ");
     }
     fclose(scores_file);
 }
 
-void update_best_scores(StatesVariables *states){
+bool capture_name(char best_user[][4], int position){
+    if(position == -1){ return false; }
+
+    static char temporal_buffer[4] = ""; 
+    static int cursor = 0;
+
+    int key = GetCharPressed();
+
+    while(key > 0){
+
+        if(((key >= 65 && key <= 90) || (key >= 97 && key <= 122) || (key >= 48 && key <= 50)) && cursor < 3){
+                temporal_buffer[cursor++] = (char)key;
+                temporal_buffer[cursor] = '\0';
+            }
+            key = GetCharPressed();
+        }
+
+        if(IsKeyPressed(KEY_BACKSPACE) && cursor > 0){ cursor--; temporal_buffer[cursor] = '\0'; }
+        
+        strcpy(best_user[position], temporal_buffer);
+        
+        if(IsKeyPressed(KEY_ENTER) && cursor > 0){ 
+            temporal_buffer[0] = '\0';
+            cursor = 0;
+            return false;
+        }
+    return true;
+}
+
+int update_best_scores(StatesVariables *states){
     for(int i = 0; i < 5; i++){
         if(states->score > states->best_scores[i]){
-            for(int j = 4; j > i; j--){ states->best_scores[j] = states->best_scores[j - 1]; }
+            for(int j = 4; j > i; j--){ 
+                states->best_scores[j] = states->best_scores[j - 1]; 
+                strcpy(states->best_user[j], states->best_user[j - 1]);
+            }
             states->best_scores[i] = states->score;
-            return;
+            strcpy(states->best_user[i], "-");
+            return i;
         }
-        if(states->score == states->best_scores[i]){ return; }
+        if(states->score == states->best_scores[i]){ return -1; }
     }
+    return -1;
 }
 
 void update_score(StatesVariables *states, int eliminated_lines){

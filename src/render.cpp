@@ -16,7 +16,7 @@ void DrawTitleCentered(const char* text, int y, int fontSize, Color color){
     DrawText(text, textX, y, fontSize, color);
 }
 
-Menu update_menu(Menu menu_state, struct StatesVariables *states){
+Menu update_menu(Menu menu_state, struct StatesVariables *states, int score_position){
     const int screenWidth = GetScreenWidth();
     const int screenHeight = GetScreenHeight();
     float btnWidth = 260;
@@ -35,6 +35,8 @@ Menu update_menu(Menu menu_state, struct StatesVariables *states){
     Rectangle btn_play = {btnX, startY, btnWidth, btnHeight};
     Rectangle btn_level = {btnX, startY + (btnHeight + spacing), btnWidth, btnHeight};
     Rectangle btn_exit = {btnX, startY + (btnHeight + spacing) * 2, btnWidth, btnHeight};
+    Rectangle btn_instructions = {930, 20, 50, 50};
+    Rectangle btn_instructions_back = {930, 20, 50, 50};
 
     Rectangle btn_resume = {btnX, pausedY, btnWidth, btnHeight};
     Rectangle btn_restart = {btnX, pausedY + (btnHeight + spacing), btnWidth, btnHeight};
@@ -44,7 +46,7 @@ Menu update_menu(Menu menu_state, struct StatesVariables *states){
         case MAIN_MENU:{ // ---------------- MAIN MENU ----------------
             DrawTitleCentered("Tetrix", 80, 140, WHITE);
             DrawRectangle((screenWidth - 300) / 2, 630, 300, 280, (Color){200, 200, 200, 150});
-            draw_scores(states->best_scores); 
+            draw_scores(states->best_user, states->best_scores); 
             float centerX_menu_princ = (GetScreenWidth() - btn_play.width) / 2;
             btn_play.x = centerX_menu_princ;
             btn_level.x = centerX_menu_princ;
@@ -75,6 +77,15 @@ Menu update_menu(Menu menu_state, struct StatesVariables *states){
             } else {
                 DrawRectangleRec(btn_exit, (Color){200, 200, 200, 150});
                 DrawTextCentered("EXIT", btn_exit, 20, BLACK);
+            }
+
+            if(CheckCollisionPointRec(mouse, btn_instructions)){ // --- INSTRUCTIONS ---
+                DrawRectangleRec(btn_instructions, DARKGRAY);
+                DrawTextCentered("?", btn_instructions, 20, WHITE);
+                if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ menu_state = INSTRUCTION; }
+            } else {
+                DrawRectangleRec(btn_instructions, (Color){200, 200, 200, 150});
+                DrawTextCentered("?", btn_instructions, 20, BLACK);
             }
         } break;
 
@@ -114,10 +125,35 @@ Menu update_menu(Menu menu_state, struct StatesVariables *states){
                 DrawTextCentered("RETURN TO MENU", btn_exit_menu, 20, BLACK);
             }
         } break;
+        case INSTRUCTION:{
+            if(CheckCollisionPointRec(mouse, btn_instructions_back)){ // --- INSTRUCTIONS BACK ---
+                DrawRectangleRec(btn_instructions_back, DARKGRAY);
+                DrawTextCentered("<-", btn_instructions_back, 20, WHITE);
+                if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ menu_state = MAIN_MENU; }
+            } else {
+                DrawRectangleRec(btn_instructions_back, (Color){200, 200, 200, 150});
+                DrawTextCentered("<-", btn_instructions_back, 20, BLACK);
+            }
+        } break;
         case GAME_OVER:{ // ---------------- GAME OVER ----------------
             DrawRectangle(offset_x, offset_y, board_widthRL, board_heightRL, Fade(BLACK, 0.8f)); 
-            DrawText("GAME OVER", (screen_width - MeasureText("GAME OVER", 50)) >> 1, (screen_height - 50) >> 1, 50, RED); 
-            DrawText("Enter to main menu", (screen_width - MeasureText("Enter to main menu", 30)) >> 1, 750, 30, WHITE);
+            DrawText("GAME OVER", (screen_width - MeasureText("GAME OVER", 50)) >> 1, ((screen_height - 50) >> 1) - 200, 50, RED); 
+            DrawText("NEW HIGH SCORE!!", (screen_width - MeasureText("NEW HIGH SCORE!!", 50)) >> 1, ((screen_height - 50) >> 1) - 100, 50, GOLD); 
+
+            DrawRectangle((screen_width - 220) >> 1, 520, 220, 60, RAYWHITE);
+            DrawRectangleLines((screen_width - 220) >> 1, 520, 220, 60, GOLD);
+
+            if(score_position >= 0 && score_position < 5){
+                const char* name = states->best_user[score_position];
+
+                int text_width = MeasureText(name, 35);
+                int text_x = ((screen_width - 220) >> 1) + ((220 - text_width) >> 1);
+                int text_y = 520 + ((60 - 35) >> 1);
+
+                DrawText(name, text_x, text_y, 35, BLACK);
+            }
+
+            DrawText("Press enter to main menu", (screen_width - MeasureText("Enter to main menu", 30)) >> 1, 930, 30, WHITE);
         } break;
     }
     return menu_state;
@@ -236,10 +272,16 @@ void draw_next_piece(struct StatesVariables *states, int offset_x, int offset_y)
     }
 }
 
-void draw_scores(long int best_scores[]){
+void draw_scores(char best_user[][4], long int best_scores[]){
     DrawText("HIGH SCORES: ", (GetScreenWidth() - MeasureText("HIGH SCORES: ", 30) >> 1), 660, 30, BLACK);
     for(int i = 0; i < 5; i++){
-        DrawText(TextFormat("%ld", best_scores[i]), (GetScreenWidth() - MeasureText(TextFormat("%ld", best_scores[i]), 25)) >> 1, 700 + (i * 40), 25, BLACK);
+        DrawText(
+            TextFormat("%s\t%ld", best_user[i], best_scores[i]), 
+            (GetScreenWidth() - MeasureText(TextFormat("%s\t%ld", best_user[i], best_scores[i]), 25)) >> 1, 
+            700 + (i * 40), 
+            25, 
+            BLACK
+        );
     }    
 }
 void draw_instructions(){
