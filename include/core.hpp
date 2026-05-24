@@ -27,6 +27,7 @@ typedef struct StatesVariables{
     float fast_gravity_time;
     bool game_over;
     bool paused;
+    bool restart;
     int hold_piece_type;
     bool can_be_held;
     Blocks hold_block;

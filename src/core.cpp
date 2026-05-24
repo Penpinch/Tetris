@@ -45,8 +45,7 @@ bool capture_name(char best_user[][4], int position){
     int key = GetCharPressed();
 
     while(key > 0){
-
-        if(((key >= 65 && key <= 90) || (key >= 97 && key <= 122) || (key >= 48 && key <= 50)) && cursor < 3){
+        if(((key >= 65 && key <= 90) || (key >= 97 && key <= 122)) && cursor < 3){
                 temporal_buffer[cursor++] = (char)key;
                 temporal_buffer[cursor] = '\0';
             }
@@ -54,9 +53,9 @@ bool capture_name(char best_user[][4], int position){
         }
 
         if(IsKeyPressed(KEY_BACKSPACE) && cursor > 0){ cursor--; temporal_buffer[cursor] = '\0'; }
-        
+
         strcpy(best_user[position], temporal_buffer);
-        
+
         if(IsKeyPressed(KEY_ENTER) && cursor > 0){ 
             temporal_buffer[0] = '\0';
             cursor = 0;
@@ -178,6 +177,7 @@ void reset(CurrentPiece *current_piece, StatesVariables *states){
     states->fast_gravity_time = 0.05;
     states->game_over = false;
     states->paused = false;
+    states->restart = false;
     states->hold_piece_type = EMPTY; 
     states->can_be_held = true; 
     for(int i = 0; i < 4; i++){ for(int j = 0; j < 4; j++){ states->hold_block.block[i][j] = 0; } } // Reset hold_block.
