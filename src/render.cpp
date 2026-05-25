@@ -46,95 +46,53 @@ Menu update_menu(Menu menu_state, struct StatesVariables *states, int score_posi
             DrawTitleCentered("Tetrix", 80, 140, WHITE);
             DrawRectangle((screenWidth - 300) / 2, 630, 300, 280, (Color){200, 200, 200, 150});
             draw_scores(states->best_user, states->best_scores); 
-            float centerX_menu_princ = (GetScreenWidth() - btn_play.width) / 2;
-            btn_play.x = centerX_menu_princ;
-            btn_level.x = centerX_menu_princ;
-            btn_exit.x = centerX_menu_princ;
 
-            if(CheckCollisionPointRec(mouse, btn_play)){ // --- PLAY ---
-                DrawRectangleRec(btn_play, DARKGRAY);
-                DrawTextCentered("PLAY", btn_play, 20, WHITE);
-                if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ menu_state = RESUME; }
-            } else { 
-                DrawRectangleRec(btn_play, (Color){200, 200, 200, 150});
-                DrawTextCentered("PLAY", btn_play, 20, BLACK);
-            }
+            bool hovered_play = CheckCollisionPointRec(mouse, btn_play); // --- PLAY ---
+            DrawRectangleRec(btn_play, hovered_play ? DARKGRAY : (Color){200, 200, 200, 150});
+            DrawTextCentered("PLAY", btn_play, 20, hovered_play ? WHITE : BLACK);
+            if(hovered_play && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ menu_state = RESUME; }
 
-            if(CheckCollisionPointRec(mouse, btn_level)){ // --- CHOOSE LEVEL ---
-                DrawRectangleRec(btn_level, DARKGRAY);
-                DrawTextCentered(TextFormat("LEVEL %d", states->choosed_level), btn_level, 20, WHITE);
-                if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ menu_state = LEVEL;}
-            } else {
-                DrawRectangleRec(btn_level, (Color){200, 200, 200, 150});
-                DrawTextCentered(TextFormat("LEVEL %d", states->choosed_level), btn_level, 20, BLACK);
-            }
+            bool hovered_level = CheckCollisionPointRec(mouse, btn_level); // --- CHOOSE LEVEL ---
+            DrawRectangleRec(btn_level, hovered_level ? DARKGRAY : (Color){200, 200, 200, 150});
+            DrawTextCentered(TextFormat("LEVEL %d", states->choosed_level), btn_level, 20, hovered_level ? WHITE : BLACK);
+            if(hovered_level && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ menu_state = LEVEL;}
 
-            if(CheckCollisionPointRec(mouse, btn_exit)){ // --- EXIT ---
-                DrawRectangleRec(btn_exit, DARKGRAY);
-                DrawTextCentered("EXIT", btn_exit, 20, WHITE);
-                if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ states->exit_raylib_window = true; }
-            } else {
-                DrawRectangleRec(btn_exit, (Color){200, 200, 200, 150});
-                DrawTextCentered("EXIT", btn_exit, 20, BLACK);
-            }
+            bool hovered_exit = CheckCollisionPointRec(mouse, btn_exit); // --- EXIT ---
+            DrawRectangleRec(btn_exit, hovered_exit ? DARKGRAY : (Color){200, 200, 200, 150});
+            DrawTextCentered("EXIT", btn_exit, 20, hovered_exit ? WHITE : BLACK);
+            if(hovered_exit && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ states->exit_raylib_window = true; }
 
-            if(CheckCollisionPointRec(mouse, btn_instructions)){ // --- INSTRUCTIONS ---
-                DrawRectangleRec(btn_instructions, DARKGRAY);
-                DrawTextCentered("?", btn_instructions, 20, WHITE);
-                if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ menu_state = INSTRUCTION; }
-            } else {
-                DrawRectangleRec(btn_instructions, (Color){200, 200, 200, 150});
-                DrawTextCentered("?", btn_instructions, 20, BLACK);
-            }
+            bool hovered_instructions = CheckCollisionPointRec(mouse, btn_instructions); // --- INSTRUCTIONS ---
+            DrawRectangleRec(btn_instructions, hovered_instructions ? DARKGRAY : (Color){200, 200, 200, 150});
+            DrawTextCentered("?", btn_instructions, 20, hovered_instructions ? WHITE : BLACK);
+            if(hovered_instructions && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ menu_state = INSTRUCTION; }
         } break;
 
         case PAUSED_MENU:{ // ---------------- PLAY MENU ----------------
-            float centerX = (GetScreenWidth() - btn_resume.width) / 2;
-            btn_resume.x = centerX;
-            btn_restart.x = centerX;
-            btn_exit_menu.x = centerX;
-
             DrawRectangle(offset_x, offset_y, board_widthRL, board_heightRL, Fade(BLACK, 0.8f)); 
             DrawTitleCentered("PAUSED", 350, 50, WHITE);
 
-            if(CheckCollisionPointRec(mouse, btn_resume)){ // --- RESUME ----
-                DrawRectangleRec(btn_resume, DARKGRAY);
-                DrawTextCentered("RESUME", btn_resume, 20, WHITE);
-                if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ states->paused = false; menu_state = RESUME; }
-            } else {
-                DrawRectangleRec(btn_resume, (Color){200, 200, 200, 150});
-                DrawTextCentered("RESUME", btn_resume, 20, BLACK);
-            }
+            bool hovered_resume = CheckCollisionPointRec(mouse, btn_resume); // --- RESUME ----
+            DrawRectangleRec(btn_resume, hovered_resume ? DARKGRAY : (Color){200, 200, 200, 150});
+            DrawTextCentered("RESUME", btn_resume, 20, hovered_resume ? WHITE : BLACK);
+            if(hovered_resume && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ states->paused = false; menu_state = RESUME; }
 
-            if(CheckCollisionPointRec(mouse, btn_restart)){ // --- RESTART ----
-                DrawRectangleRec(btn_restart, DARKGRAY);
-                DrawTextCentered("RESTART", btn_restart, 20, WHITE);
-                // if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ states->paused = false; menu_state = RESUME; }
-                if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ states->restart = true; }
-            } else {
-                DrawRectangleRec(btn_restart, (Color){200, 200, 200, 150});
-                DrawTextCentered("RESTART", btn_restart, 20, BLACK);
-            }
+            bool hovered_restart = CheckCollisionPointRec(mouse, btn_restart); // --- RESTART ----
+            DrawRectangleRec(btn_restart, hovered_restart ? DARKGRAY : (Color){200, 200, 200, 150});
+            DrawTextCentered("RESTART", btn_restart, 20, hovered_restart ? WHITE : BLACK);
+            if(hovered_restart && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ states->restart = true; }
 
-            if(CheckCollisionPointRec(mouse, btn_exit_menu)){ // --- RETURN TO MENU ----
-                DrawRectangleRec(btn_exit_menu, DARKGRAY);
-                DrawTextCentered("RETURN TO MENU", btn_exit_menu, 20, WHITE);
-                if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ menu_state = MAIN_MENU; }
-            } else {
-                DrawRectangleRec(btn_exit_menu, (Color){200, 200, 200, 150});
-                DrawTextCentered("RETURN TO MENU", btn_exit_menu, 20, BLACK);
-            }
+            bool hovered_return = CheckCollisionPointRec(mouse, btn_exit_menu); // --- RETURN TO MENU ----
+            DrawRectangleRec(btn_exit_menu, hovered_return ? DARKGRAY : (Color){200, 200, 200, 150});
+            DrawTextCentered("RETURN TO MENU", btn_exit_menu, 20, hovered_return ? WHITE : BLACK);
+            if(hovered_return && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ menu_state = MAIN_MENU; }
         } break;
 
         case INSTRUCTION:{
-            if(CheckCollisionPointRec(mouse, btn_instructions_back)){ // --- INSTRUCTIONS BACK ---
-                DrawRectangleRec(btn_instructions_back, DARKGRAY);
-                DrawTextCentered("<-", btn_instructions_back, 20, WHITE);
-                if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ menu_state = MAIN_MENU; }
-            } else {
-                DrawRectangleRec(btn_instructions_back, (Color){200, 200, 200, 150});
-                DrawTextCentered("<-", btn_instructions_back, 20, BLACK);
-            }
+            bool hovered_instructions_back = CheckCollisionPointRec(mouse, btn_instructions_back); // --- INSTRUCTIONS BACK ---
+            DrawRectangleRec(btn_instructions_back, hovered_instructions_back ? DARKGRAY : (Color){200, 200, 200, 150});
+            DrawTextCentered("<-", btn_instructions_back, 20, hovered_instructions_back ? WHITE : BLACK);
+            if(hovered_instructions_back && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){ menu_state = MAIN_MENU; }
         } break;
 
         case GAME_OVER:{ // ---------------- GAME OVER ----------------
