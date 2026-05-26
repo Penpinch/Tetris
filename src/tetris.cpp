@@ -33,9 +33,9 @@ int main(){
     InitAudioDevice();
 
     Texture2D background_image;
-    background_image = LoadTexture("../tetris_background.png");
+    background_image = LoadTexture("assets/tetris_background.png");
 
-    Music music = LoadMusicStream("../temporal_tetris_theme.ogg");
+    Music music = LoadMusicStream("assets/temporal_tetris_theme.ogg");
     PlayMusicStream(music);
 
     bool score_checked = false;

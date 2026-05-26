@@ -15,7 +15,7 @@
 KeysFunctions key_actions[256] = {NULL}; // Functon pointer.
 
 void write_file(char best_user[][4], long int best_scores[]){
-    FILE *scores_file = fopen("../scores_file.txt", "w");
+    FILE *scores_file = fopen("scores_file.txt", "w");
     if(scores_file == NULL){ perror("Failed at opening the file."); return; }
 
     fprintf(scores_file, "%s %s %s %s %s %ld %ld %ld %ld %ld", 
@@ -25,7 +25,7 @@ void write_file(char best_user[][4], long int best_scores[]){
 }
 
 void read_file(char best_user[][4], long int read_scores[]){
-    FILE *scores_file = fopen("../scores_file.txt", "r");
+    FILE *scores_file = fopen("scores_file.txt", "r");
     if(scores_file == NULL){ perror("Failed at opening the file."); return; }
 
     if(fscanf(scores_file, "%s %s %s %s %s %ld %ld %ld %ld %ld", 
