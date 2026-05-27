@@ -8,12 +8,11 @@
 # include "pieces.hpp"
 
 int main(){
-    Board board;
-    for(int a = 0; a < BOARD_HEIGHT; a++){ for(int b = 0; b < BOARD_WIDTH; b++){ board.grid[a][b] = 0; } } // Initialize the board with 0.
-    CurrentPiece current_piece = {&board, 0, 0, EMPTY, 0};
+    Board *board = create_board();
+    CurrentPiece current_piece = {board, 0, 0, EMPTY, 0};
     Blocks h_b, nx_p; // Block for hold_block and for next_block.
     for(int i = 0; i < 4; i++){ for(int j = 0; j < 4; j++){ h_b.block[i][j] = 0; nx_p.block[i][j] = 0; } } // Init h_b, nx_p
-    StatesVariables states = {&board, 0, 0, 0, 0, 0.8, 0.05, false, false, false, EMPTY, true, h_b, EMPTY, nx_p, false, false, {0, 0, 0, 0, 0}, {"-", "-", "-", "-", "-"}};
+    StatesVariables states = {board, 0, 0, 0, 0, 0.8, 0.05, false, false, false, EMPTY, true, h_b, EMPTY, nx_p, false, false, {0, 0, 0, 0, 0}, {"-", "-", "-", "-", "-"}};
 
     current_piece.piece_type = next_piece();
     current_piece.current_x = 3;
@@ -84,7 +83,7 @@ int main(){
                 }
                 break;
             case RESUME:
-                update(&board, &current_piece, &states);
+                update(board, &current_piece, &states);
                 if(IsKeyPressed(KEY_ESCAPE)){ states.paused = true; menu_state = PAUSED_MENU; }
                 if(states.game_over){ menu_state = GAME_OVER; }
                 break;
@@ -107,7 +106,7 @@ int main(){
         DrawTextureV(background_image, Vector2{0.0f, 0.0f}, Fade(WHITE, 0.9f));
 
         if(menu_state == RESUME || menu_state == PAUSED_MENU || menu_state == GAME_OVER){ 
-            draw_game(&board, &current_piece, &states, offset_x, offset_y); 
+            draw_game(board, &current_piece, &states, offset_x, offset_y); 
         }
 
         if(menu_state == INSTRUCTION){ DrawTextureV(background_image, Vector2{0.0f, 0.0f}, Fade(WHITE, 0.5f)); draw_instructions(); }
@@ -118,6 +117,8 @@ int main(){
     UnloadMusicStream(music);
     CloseAudioDevice();
     CloseWindow();
+
+    destroy_board(board);
 
     return 0;
 }

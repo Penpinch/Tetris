@@ -7,9 +7,11 @@ typedef enum{
 } Dimensions;
 
 typedef struct{
-    int grid[BOARD_HEIGHT][BOARD_WIDTH];
+    int **grid;
 } Board;
 
+Board *create_board();
+void destroy_board(Board *board);
 void set_block(Board *board, int x, int y, int piece_type);
 void set_piece(Board *board, int piece_x, int piece_y, int piece_type, int rotation);
 

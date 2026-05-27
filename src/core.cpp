@@ -162,7 +162,7 @@ void pause(CurrentPiece *current_piece, StatesVariables *states){
 }
 
 void reset(CurrentPiece *current_piece, StatesVariables *states){
-    for(int a = 0; a < BOARD_HEIGHT; a++){ for(int b = 0; b < BOARD_WIDTH; b++){ states->board->grid[a][b] = 0; } } // Reset board.
+    for(int a = 0; a < BOARD_HEIGHT; a++){ memset(states->board->grid[a], 0, BOARD_WIDTH * sizeof(int)); } // Reset board.
 
     current_piece->piece_type = next_piece();
     current_piece->current_x = 3;
