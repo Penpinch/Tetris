@@ -17,6 +17,8 @@ void DrawTitleCentered(const char* text, int y, int fontSize, Color color);
 Menu update_menu(Menu menu_state, struct StatesVariables *states, int score_position);
 
 Color get_piece_color(int piece_type);
+int get_ghost_coord(CurrentPiece *current_piece);
+void draw_ghost_piece(CurrentPiece *current_piece, int offset_x, int offset_y);
 void draw_game(Board *board, CurrentPiece *current_piece, struct StatesVariables *states, int offset_x, int offset_y);
 void draw_hold_piece(struct StatesVariables *states, int offset_x, int offset_y);
 void draw_next_piece(struct StatesVariables *states, int offset_x, int offset_y);

@@ -133,6 +133,45 @@ Color get_piece_color(int piece_type){
     }
 }
 
+int get_ghost_coord(CurrentPiece *current_piece){
+    if(current_piece->piece_type == EMPTY){ return current_piece->current_y; }
+
+    int ghost_y = current_piece->current_y;
+    while(can_move(current_piece, current_piece->current_x, ghost_y + 1, current_piece->rotation)){
+        ghost_y ++;
+    }
+    return ghost_y;
+}
+
+void draw_ghost_piece(CurrentPiece *current_piece, int offset_x, int offset_y){
+    if(current_piece->piece_type == EMPTY){ return; }    
+
+    Blocks shape;
+    get_blocks(current_piece->piece_type, current_piece->rotation, &shape);
+    Color ghost_color = get_piece_color(current_piece->piece_type);
+    ghost_color.a = 90;
+
+    int ghost_y = get_ghost_coord(current_piece);
+
+    for(int y = 0; y < 4; y++){
+        for(int x = 0; x < 4; x++){
+            if(shape.block[y][x] == 1){
+                int board_y = ghost_y + y;
+
+                if(board_y >= 2){
+                    int screen_x = (current_piece->current_x + x) * CELL_SIZE;
+                    int screen_y = (board_y - 2) * CELL_SIZE;
+
+                    DrawRectangle(
+                        offset_x + screen_x + MARGIN, offset_y + screen_y + MARGIN, 
+                        CELL_SIZE - MARGIN * 2, CELL_SIZE - MARGIN * 2, ghost_color
+                    );
+                }
+            }
+        }
+    }
+}
+
 void draw_game(Board *board, CurrentPiece *current_piece, struct StatesVariables *states, int offset_x, int offset_y){
     int screen_width = 1000, screen_height = 1000;
 
@@ -153,6 +192,7 @@ void draw_game(Board *board, CurrentPiece *current_piece, struct StatesVariables
     Blocks shape;
     get_blocks(current_piece->piece_type, current_piece->rotation, &shape);
     Color current_color = get_piece_color(current_piece->piece_type);
+    draw_ghost_piece(current_piece, offset_x, offset_y);
 
     for(int y = 0; y < 4; y++){
         for(int x = 0; x < 4; x++){
