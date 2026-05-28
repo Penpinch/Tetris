@@ -133,7 +133,8 @@ void hold_piece(CurrentPiece *current_piece, StatesVariables *states){
     if(states->hold_piece_type == EMPTY){
         states->hold_piece_type = current_piece->piece_type;
         memcpy(states->hold_block.block, tetris_pieces[states->hold_piece_type - 1][0], sizeof(int)*16);
-        current_piece->piece_type = next_piece();
+        current_piece->piece_type = states->next_piece_type;
+        states->next_piece_type = next_piece();
     } else {
         int temp = current_piece->piece_type;
         current_piece->piece_type = states->hold_piece_type;
