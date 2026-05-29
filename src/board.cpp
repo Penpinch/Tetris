@@ -2,7 +2,7 @@
 # include "board.hpp"
 # include "pieces.hpp"
 
-Board *create_board(){
+Board *create_board(){ // Create the board using dynamic memory.
     Board *board = (Board*)malloc(sizeof(Board));
     if(board == NULL){ return NULL; }
 
@@ -30,7 +30,7 @@ void destroy_board(Board *board){
 
 void set_block(Board *board, int x, int y, int piece_type){ board->grid[y][x] = piece_type; }
 
-void set_piece(Board *board, int piece_x, int piece_y, int piece_type, int rotation){
+void set_piece(Board *board, int piece_x, int piece_y, int piece_type, int rotation){ // Set the piece's shape on the board.
     Blocks new_block;
     get_blocks(piece_type, rotation, &new_block);
 

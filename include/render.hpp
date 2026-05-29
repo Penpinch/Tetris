@@ -5,7 +5,7 @@
 # include "current_piece.hpp"
 # include "core.hpp"
 
-constexpr int ROWS = 20; // Solo C++
+constexpr int ROWS = 20; // constexpr only C++
 constexpr int COLS = 10;
 constexpr int CELL_SIZE = 40;
 constexpr int MARGIN = 2;

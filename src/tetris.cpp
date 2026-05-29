@@ -12,11 +12,15 @@ int main(){
     CurrentPiece current_piece = {board, 0, 0, EMPTY, 0};
     Blocks h_b, nx_p; // Block for hold_block and for next_block.
     for(int i = 0; i < 4; i++){ for(int j = 0; j < 4; j++){ h_b.block[i][j] = 0; nx_p.block[i][j] = 0; } } // Init h_b, nx_p
-    StatesVariables states = {board, 0, 0, 0, 0, 0.8, 0.05, false, false, false, EMPTY, true, h_b, EMPTY, nx_p, false, false, {0, 0, 0, 0, 0}, {"-", "-", "-", "-", "-"}};
+    StatesVariables states = {
+        board, 0, 0, 0, 0, 0.8, 0.05, false, false, false, 
+        EMPTY, true, h_b, EMPTY, nx_p, false, false, 
+        {0, 0, 0, 0, 0}, {"-", "-", "-", "-", "-"}
+    };
 
-    current_piece.piece_type = next_piece();
-    current_piece.current_x = 3;
-    states.next_piece_type = next_piece();
+    current_piece.piece_type = next_piece(); // First piece.
+    current_piece.current_x = 3; // The piece appears in the middle of the board.
+    states.next_piece_type = next_piece(); // Set the next piece.
     update_difficulty(&states);
     init_keyboard(&current_piece, &states);
     read_file(states.best_user, states.best_scores);
@@ -97,9 +101,7 @@ int main(){
             menu_state = RESUME; 
         }
 
-        if(menu_state == MAIN_MENU && (states.paused || states.game_over)){
-            reset(&current_piece, &states); 
-        }
+        if(menu_state == MAIN_MENU && (states.paused || states.game_over)){ reset(&current_piece, &states); }
 
         BeginDrawing(); // --- RENDER --- 
         ClearBackground(BLACK);

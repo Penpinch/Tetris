@@ -1,6 +1,6 @@
 # include "pieces.hpp"
 const int tetris_pieces[7][4][4][4] = {
-    { // L. Four rotations.
+    { // L. Four significant rotations.
         {
             {0, 1, 0, 0}, 
             {0, 1, 0, 0}, 
@@ -26,7 +26,7 @@ const int tetris_pieces[7][4][4][4] = {
             {0, 0, 0, 0}, 
         },
     }, 
-    { // J. Four rotations.
+    { // J. Four significant rotations.
         {
             {0, 0, 1, 0}, 
             {0, 0, 1, 0}, 
@@ -52,7 +52,7 @@ const int tetris_pieces[7][4][4][4] = {
             {0, 0, 0, 0}, 
         }
     }, 
-    { // O. One rotation.
+    { // O. One significant rotation.
         {
             {0, 0, 0, 0}, 
             {0, 1, 1, 0}, 
@@ -78,7 +78,7 @@ const int tetris_pieces[7][4][4][4] = {
             {0, 0, 0, 0}, 
         },
     }, 
-    { // S. Two rotations.
+    { // S. Two significant rotations.
         {
             {0, 1, 0, 0}, 
             {0, 1, 1, 0}, 
@@ -104,7 +104,7 @@ const int tetris_pieces[7][4][4][4] = {
             {0, 0, 0, 0}, 
         },
     }, 
-    { // Z. Two rotations.
+    { // Z. Two significant rotations.
         {
             {0, 0, 1, 0}, 
             {0, 1, 1, 0}, 
@@ -130,7 +130,7 @@ const int tetris_pieces[7][4][4][4] = {
             {0, 0, 0, 0}, 
         },
     }, 
-    { // I. Two rotations.
+    { // I. Two significant rotations.
         {
             {0, 1, 0, 0}, 
             {0, 1, 0, 0}, 
@@ -156,7 +156,7 @@ const int tetris_pieces[7][4][4][4] = {
             {0, 0, 0, 0}, 
         },
     }, 
-    { // T. Four rotations.
+    { // T. Four significant rotations.
         {
             {0, 0, 1, 0}, 
             {0, 1, 1, 1}, 
@@ -184,7 +184,7 @@ const int tetris_pieces[7][4][4][4] = {
     }
 };
 
-void get_blocks(int piece_index, int rotation_index, Blocks *new_block){
+void get_blocks(int piece_index, int rotation_index, Blocks *new_block){ // Obtain the structure of the pieces (4 x 4 blocks).
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
             new_block->block[i][j] = tetris_pieces[piece_index - 1][rotation_index][i][j];

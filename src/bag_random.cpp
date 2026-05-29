@@ -45,7 +45,7 @@ int front(Queue *bag){
     return -1;
 }
 
-int next_piece(){
+int next_piece(){ // Use a queue to store the pieces (7-bag system).
     static Queue bag;
     static bool initialize = false;
     int next_on_queue = 0;

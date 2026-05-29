@@ -64,7 +64,7 @@ bool capture_name(char best_user[][4], int position){
     return true;
 }
 
-int update_best_scores(StatesVariables *states){
+int update_best_scores(StatesVariables *states){ // Update the ranking of scores from highest to lowest.
     for(int i = 0; i < 5; i++){
         if(states->score > states->best_scores[i]){
             for(int j = 4; j > i; j--){ 
@@ -91,7 +91,7 @@ void update_score(StatesVariables *states, int eliminated_lines){
     states->score += eliminated_lines * (states->level + 1);
 }
 
-void update_difficulty(StatesVariables *states){
+void update_difficulty(StatesVariables *states){ // Update the gravity value.
     states->level = states->choosed_level + (states->eliminated_lines / 10);
     float delay = 0.8f * pow(0.9f, states->level - 1);
 
@@ -99,7 +99,7 @@ void update_difficulty(StatesVariables *states){
     else { states->gravity_time = delay; }
 }
 
-void spawn_next_piece(StatesVariables *states, CurrentPiece *current_piece){
+void spawn_next_piece(StatesVariables *states, CurrentPiece *current_piece){ // Places the piece at the top of the board.
     current_piece->piece_type = states->next_piece_type;
     states->next_piece_type = next_piece();
     memcpy(states->next_block.block, tetris_pieces[states->next_piece_type - 1][0], sizeof(int) * 16);
@@ -230,7 +230,7 @@ void update_level(StatesVariables *states){
     update_difficulty(states);
 }
 
-void update(Board *board, CurrentPiece *current_piece, StatesVariables *states){
+void update(Board *board, CurrentPiece *current_piece, StatesVariables *states){ // Actions per time.
     InputState input_state; // SOFT DROP
     input(current_piece, states, &input_state);
 
