@@ -189,6 +189,24 @@ void draw_game(Board *board, CurrentPiece *current_piece, struct StatesVariables
         }
     }
 
+    for(int x = 0; x < BOARD_WIDTH + 1; x++){ // Vertical lines.
+        DrawLineEx(
+            (Vector2){(float)(offset_x + x * CELL_SIZE), (float)offset_y}, 
+            (Vector2){(float)(offset_x + x * CELL_SIZE), (float)(offset_y + (BOARD_HEIGHT - 2) * CELL_SIZE)}, 
+            1.5f, 
+            (Color){50, 50, 50, 70}
+        );
+    }
+
+    for(int y = 0; y < BOARD_HEIGHT; y++){ // Horizontal lines.
+        DrawLineEx(
+            (Vector2){(float)offset_x, (float)(offset_y + y * CELL_SIZE)}, 
+            (Vector2){(float)(offset_x + BOARD_WIDTH * CELL_SIZE), (float)(offset_y + y * CELL_SIZE)}, 
+            1.5f, 
+            (Color){50, 50, 50, 70}
+        );
+    }
+
     Blocks shape;
     get_blocks(current_piece->piece_type, current_piece->rotation, &shape);
     Color current_color = get_piece_color(current_piece->piece_type);
