@@ -124,6 +124,7 @@ void gravity(StatesVariables *states, CurrentPiece *current_piece, bool soft_dro
     if(time_difference >= (float)speed){
         int go_down_result = go_down(current_piece); 
         if(go_down_result <= 0){ spawn_next_piece(states, current_piece); }
+        else if(soft_drop){ states->score += 1; } // One point per cell dropped.
         start = end; 
     }
 }
@@ -148,7 +149,9 @@ void hold_piece(CurrentPiece *current_piece, StatesVariables *states){
 }
 
 void hard_drop(CurrentPiece *current_piece, StatesVariables *states){
-    while((go_down(current_piece)) == 1){}
+    int cells_dropped = 0;
+    while((go_down(current_piece)) == 1){ cells_dropped++; }
+    states->score += cells_dropped * 2; // Two points per cell dropped.
     spawn_next_piece(states, current_piece);
 }
 
