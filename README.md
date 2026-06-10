@@ -34,14 +34,14 @@ Tetris/
 │   ├── pieces.hpp
 │   └── render.hpp
 ├── src/
-│   ├── bag_random.cpp # 7-bag system.
-│   ├── board.cpp # Board actions.
-│   ├── core.cpp # Game logic.
-│   ├── current_piece.cpp # Movement of the pieces.
-│   ├── lines.cpp # Handling lines disposal.
-│   ├── pieces.cpp # Definition of the pieces.
-│   ├── render.cpp # Graphics using Raylib.
-│   └── tetris.cpp # Gmae loop.
+│   ├── bag_random.cpp      # 7-bag system.
+│   ├── board.cpp           # Board actions.
+│   ├── core.cpp            # Game logic.
+│   ├── current_piece.cpp   # Movement of the pieces.
+│   ├── lines.cpp           # Handling lines disposal.
+│   ├── pieces.cpp          # Definition of the pieces.
+│   ├── render.cpp          # Graphics using Raylib.
+│   └── tetris.cpp          # Game loop.
 ├── README.md
 └── .gitignore
 ```
