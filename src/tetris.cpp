@@ -32,7 +32,7 @@ int main(){
     int offset_x = (screen_width - board_widthRL) >> 1, offset_y = (screen_height - board_heightRL) >> 1; 
 
     InitWindow(screen_width, screen_height, "Tetris");
-    SetExitKey(KEY_NINE);
+    SetExitKey(KEY_LEFT_CONTROL);
     InitAudioDevice();
 
     Texture2D background_image;

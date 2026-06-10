@@ -329,5 +329,5 @@ void draw_instructions(){
 
     DrawText("Press the M key to mute/unmute the music.", 50, 650, 25, WHITE);
 
-    DrawText("Press the P key to exit the game.", 50, 690, 25, WHITE);
+    DrawText("Press the left control key to exit the game.", 50, 690, 25, WHITE);
 }
